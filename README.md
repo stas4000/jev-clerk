@@ -56,7 +56,7 @@ The film: `video/jev-clerk-film-tg.mp4`.
 macOS 14+, Python 3.12+, [uv](https://docs.astral.sh/uv/). Grant your terminal Screen Recording and Accessibility. Install Frappe Books, create a company, add your suppliers and expense items.
 
 ```
-git clone https://github.com/bles-software-org/jev-clerk && cd jev-clerk
+git clone https://github.com/stas4000/jev-clerk && cd jev-clerk
 uv sync
 cp .env.example .env          # TypeSafe key; optional Anthropic key for System 2
 # put inv_*.pdf in invoices/ and a ground_truth.json next to them if you want scoring

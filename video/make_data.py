@@ -34,6 +34,6 @@ if fp.exists():
 last = S["blocks"][-1]
 jev_model_sec = sum(r["jev_seconds"] for r in rows.values() if r["iteration"] > 80 and r.get("n_steps")) / max(1, sum(1 for r in rows.values() if r["iteration"] > 80 and r.get("n_steps")))
 data = {**S, "hero": {"iteration": HERO, "playbook": h["playbook"], "frames": len(os.listdir(root / "video/frames/hero")), "speed": 1, "read": h["read"], "row": h["row"]["name"], "events": events, "captions": caps, "read_cost": 0.00027, "read_seconds": 0, "cost": h["jev_cost"], "seconds": h["seconds"]},
-        "montage_frames": [240, 240, 240], "montage_speed": 8, "frontier": fr, "jev_model_sec": jev_model_sec, "repo": "bles-software-org/jev-clerk"}
+        "montage_frames": [240, 240, 240], "montage_speed": 8, "frontier": fr, "jev_model_sec": jev_model_sec, "repo": "stas4000/jev-clerk"}
 (root / "video/data.js").write_text("window.DATA = " + json.dumps(data, ensure_ascii=False) + ";")
 print(len(events), "events; blocks", [(b["ok"], b["usd"]) for b in S["blocks"]], "frontier", fr and {k: fr[k] for k in ("n", "ok", "cost_avg", "steps_avg", "model_sec_avg")}, "jev model s/invoice", round(jev_model_sec, 2))
