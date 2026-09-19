@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Jev Clerk: the film</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  :root { --bg:#0A0C11; --ink:#F3EFE6; --dim:#8B90A0; --s1:#C8FF3D; --s2:#A58BFF; --bad:#FF6B57; --card:#12151D; --line:#232836; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { width:1920px; height:1080px; background:var(--bg); overflow:hidden; color:var(--ink); font-family:'Manrope',sans-serif; }
+  .scene { position:absolute; inset:0; opacity:0; will-change:opacity,transform; }
+  .serif { font-family:'Instrument Serif',serif; font-weight:400; letter-spacing:-0.01em; }
+  .mono { font-family:'JetBrains Mono',monospace; }
+  .s1 { color:var(--s1); } .s2 { color:var(--s2); } .dim { color:var(--dim); } .bad { color:var(--bad); }
+  #grain { position:absolute; inset:0; width:1920px; height:1080px; opacity:1; pointer-events:none; z-index:50; image-rendering:pixelated; }
+  #glow { position:absolute; width:1400px; height:1400px; border-radius:50%; filter:blur(120px); opacity:.16; z-index:0; }
+  .kicker { font-size:22px; letter-spacing:.32em; text-transform:uppercase; font-weight:700; }
+  /* hook */
+  #hook .line { position:absolute; left:140px; right:140px; font-size:150px; line-height:1.02; }
+  #hook .flash { position:absolute; inset:0; object-fit:cover; width:1920px; height:1080px; opacity:0; filter:saturate(.6) brightness(.32) blur(2px); }
+  /* job */
+  .panel { position:absolute; border-radius:22px; overflow:hidden; border:1px solid var(--line); background:#000; box-shadow:0 40px 120px rgba(0,0,0,.55); }
+  .panel img { display:block; width:100%; height:100%; object-fit:cover; }
+  #heroimg { transform:scale(1.12); transform-origin:50% 0; }
+  .tag { position:absolute; padding:8px 16px; border-radius:999px; font-size:20px; font-weight:700; background:rgba(10,12,17,.82); border:1px solid var(--line); backdrop-filter:blur(6px); }
+  #insp { position:absolute; right:56px; top:120px; width:452px; bottom:56px; }
+  #insp h4 { font-size:19px; letter-spacing:.28em; text-transform:uppercase; color:var(--dim); font-weight:700; margin-bottom:14px; }
+  .meter { display:flex; gap:14px; margin-bottom:22px; }
+  .meter > div { flex:1; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 18px; }
+  .meter b { display:block; font-family:'JetBrains Mono',monospace; font-size:34px; font-weight:700; }
+  .meter span { font-size:16px; color:var(--dim); letter-spacing:.12em; text-transform:uppercase; font-weight:600; }
+  .ev { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 16px; margin-bottom:10px; position:absolute; left:0; right:0; }
+  .ev .k { font-family:'JetBrains Mono',monospace; font-size:21px; font-weight:700; }
+  .ev .t { font-size:18px; color:var(--dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+  .ev .bar { height:5px; border-radius:3px; background:#1d2230; margin-top:9px; overflow:hidden; }
+  .ev .bar i { display:block; height:100%; border-radius:3px; }
+  .fields { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:22px; }
+  .fields div { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 14px; }
+  .fields span { display:block; font-size:14px; color:var(--dim); letter-spacing:.14em; text-transform:uppercase; font-weight:700; }
+  .fields b { font-size:20px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; }
+  /* how */
+  .node { position:absolute; border-radius:26px; padding:30px 34px; background:var(--card); border:1.5px solid var(--line); }
+  .node h3 { font-size:26px; letter-spacing:.2em; text-transform:uppercase; font-weight:800; margin-bottom:8px; }
+  .node .big { font-size:62px; line-height:1; margin-bottom:14px; }
+  .node p { font-size:24px; line-height:1.4; color:#C9CBD3; }
+  svg.wire { position:absolute; inset:0; width:1920px; height:1080px; }
+  svg.wire path { fill:none; stroke-width:3; stroke-linecap:round; }
+  .pulse { position:absolute; width:18px; height:18px; border-radius:50%; margin:-9px 0 0 -9px; }
+  /* loop */
+  .col { position:absolute; top:240px; width:520px; bottom:70px; }
+  .col .clip { height:292px; border-radius:18px; overflow:hidden; border:1px solid var(--line); position:relative; background:#000; }
+  .col .clip img { width:100%; height:100%; object-fit:cover; display:block; }
+  .col h3 { font-size:22px; letter-spacing:.24em; text-transform:uppercase; font-weight:800; margin:0 0 14px; }
+  .col .stat { display:flex; justify-content:space-between; align-items:baseline; padding:13px 2px; border-bottom:1px solid var(--line); font-size:23px; color:#C9CBD3; }
+  .col .stat b { font-family:'JetBrains Mono',monospace; font-size:32px; color:var(--ink); }
+  .pass { position:absolute; top:240px; width:108px; bottom:70px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .passcard { position:absolute; left:120px; right:120px; bottom:64px; background:#140F24; border:1.5px solid #3A2C6E; border-radius:24px; padding:28px 36px; }
+  .passcard h3 { font-size:22px; letter-spacing:.24em; text-transform:uppercase; font-weight:800; color:var(--s2); margin-bottom:14px; }
+  .passcard li { list-style:none; font-size:27px; line-height:1.35; margin-bottom:10px; padding-left:34px; position:relative; }
+  .passcard li::before { content:'→'; position:absolute; left:0; color:var(--s2); }
+  .lb { position:absolute; bottom:0; width:150px; }
+  .lb .track { position:absolute; left:0; right:0; bottom:70px; height:250px; border-radius:14px; background:#10131b; border:1px solid var(--line); overflow:hidden; }
+  .lb .fill { position:absolute; left:0; right:0; bottom:0; border-radius:12px 12px 0 0; }
+  .lb em { position:absolute; left:0; right:0; bottom:330px; text-align:center; font-style:normal; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:34px; }
+  .lb u { position:absolute; left:0; right:0; bottom:26px; text-align:center; text-decoration:none; font-size:20px; font-weight:800; letter-spacing:.12em; }
+  .lb small { position:absolute; left:0; right:0; bottom:0; text-align:center; font-size:16px; color:var(--dim); font-weight:600; }
+  .lb .stage { position:absolute; left:12px; right:12px; top:16px; font-size:19px; line-height:1.3; color:#B9BDCB; font-weight:600; }
+  .dia { position:absolute; bottom:180px; width:22px; height:22px; background:var(--s2); transform:rotate(45deg); border-radius:4px; }
+  .passcard .big { font-size:46px; line-height:1.16; }
+  /* chart */
+  .chart { position:absolute; top:300px; width:520px; height:560px; }
+  .chart h3 { font-size:22px; letter-spacing:.22em; text-transform:uppercase; font-weight:800; color:var(--dim); margin-bottom:24px; }
+  .bars { position:absolute; left:0; right:0; bottom:60px; top:70px; display:flex; align-items:flex-end; gap:34px; }
+  .bars .b { flex:1; position:relative; border-radius:14px 14px 4px 4px; }
+  .bars .b em { position:absolute; left:0; right:0; top:-54px; text-align:center; font-style:normal; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:36px; }
+  .bars .b u { position:absolute; left:0; right:0; bottom:-46px; text-align:center; text-decoration:none; font-size:20px; color:var(--dim); font-weight:700; letter-spacing:.1em; }
+  /* race + end */
+  .row3 { position:absolute; left:160px; right:160px; display:flex; gap:36px; }
+  .row3 > div { flex:1; background:var(--card); border:1.5px solid var(--line); border-radius:26px; padding:36px; }
+  .row3 h3 { font-size:22px; letter-spacing:.22em; text-transform:uppercase; font-weight:800; margin-bottom:18px; }
+  .row3 .n { font-family:'JetBrains Mono',monospace; font-weight:700; font-size:76px; line-height:1; }
+  .row3 p { font-size:23px; color:#C9CBD3; margin-top:16px; line-height:1.4; }
+  .foot { position:absolute; left:160px; right:160px; bottom:60px; font-size:20px; color:var(--dim); line-height:1.5; }
+</style>
+</head>
+<body>
+<div id="glow"></div>
+
+<section class="scene" id="hook">
+  <img class="flash" id="hookflash">
+  <div class="line serif" id="h1" style="top:250px">This model can't write<br>a single word.</div>
+  <div class="line serif" id="h2" style="top:250px">It just did our<br><i class="s1">bookkeeping.</i></div>
+  <div class="line" id="h3" style="top:760px;font-size:34px;font-weight:600;color:#C9CBD3;letter-spacing:.01em"></div>
+</section>
+
+<section class="scene" id="job">
+  <div class="kicker s1" style="position:absolute;left:56px;top:50px">System 1 at work <span class="dim">· real screen, real invoice, <span id="jobspeed"></span></span></div>
+  <div class="panel" id="jobpanel" style="left:56px;top:120px;width:1336px;height:751px"><img id="heroimg"></div>
+  <div class="tag mono" id="jobtag" style="left:76px;top:140px"></div>
+  <div id="jobcap" class="serif" style="position:absolute;left:56px;top:900px;width:1336px;font-size:56px;line-height:1.1"></div>
+  <div id="insp">
+    <h4>Invoice as Jev read it</h4>
+    <div class="fields" id="fields"></div>
+    <div class="meter"><div><b id="mcost">$0.0000</b><span>Jev cost</span></div><div><b id="mtime">0.0s</b><span>elapsed</span></div></div>
+    <h4>Decisions <span class="s1">● Jev</span> <span class="s2">● reflex</span></h4>
+    <div id="evs" style="position:relative;height:520px;overflow:hidden"></div>
+  </div>
+</section>
+
+<section class="scene" id="how">
+  <div class="kicker dim" style="position:absolute;left:120px;top:70px">How it works</div>
+  <div class="serif" id="howtitle" style="position:absolute;left:120px;top:110px;font-size:84px">Two speeds of thinking.</div>
+  <svg class="wire" id="wire"></svg>
+  <div class="node" id="n1" style="left:120px;top:300px;width:560px;border-color:#4a5e17">
+    <h3 class="s1">System 1 · Jev</h3><div class="big serif">Decides. Never writes.</div>
+    <p>Every step it sees the screen as text and picks one action from a closed list. <b class="s1 mono" id="n1lat"></b> per decision, <b class="s1 mono" id="n1cost"></b> each. No memory.</p></div>
+  <div class="node" id="n2" style="left:1240px;top:300px;width:560px;border-color:#3A2C6E">
+    <h3 class="s2">System 2 · Fable 5.1</h3><div class="big serif">Reviews. Rewrites.</div>
+    <p>After every 10 invoices it reads the full decision log, finds where Jev wasted steps, and rewrites the playbook. It never touches the screen.</p></div>
+  <div class="node" id="n3" style="left:730px;top:330px;width:460px;text-align:center">
+    <h3 class="dim">Decision log</h3><p class="mono" style="font-size:20px;text-align:left" id="logtxt"></p></div>
+  <div class="node" id="n4" style="left:730px;top:720px;width:460px;text-align:center">
+    <h3 class="dim">Playbook</h3><p>Question wording, lessons, typing formats, waits, and <b class="s2">reflexes</b>: habits that no longer need a model call.</p></div>
+  <div class="node" id="n5" style="left:120px;top:760px;width:560px;border-style:dashed">
+    <h3 class="dim">Referee</h3><p>The accounting database. An invoice counts only when a submitted entry matches supplier, date and amount.</p></div>
+  <div class="pulse" id="p1" style="background:var(--s1)"></div><div class="pulse" id="p2" style="background:var(--s2)"></div>
+</section>
+
+<section class="scene" id="loop">
+  <div class="kicker dim" style="position:absolute;left:120px;top:70px">The learning loop · ten invoices, then a System 2 pass, again and again</div>
+  <div class="serif" id="looptitle" style="position:absolute;left:120px;top:110px;font-size:80px;white-space:nowrap"></div>
+  <div id="lbars" style="position:absolute;left:120px;top:270px;width:1680px;height:400px"></div>
+  <div class="panel" style="left:120px;top:720px;width:520px;height:292px;border-radius:18px"><img id="clipL"><div class="tag mono" style="left:12px;top:12px;font-size:16px" id="clipTag"></div></div>
+  <div class="passcard" id="pc" style="left:690px;right:120px;top:720px;bottom:auto;height:292px"></div>
+</section>
+
+<section class="scene" id="chart">
+  <div class="kicker dim" style="position:absolute;left:120px;top:70px">From the run ledger · nothing estimated</div>
+  <div class="serif" id="charttitle" style="position:absolute;left:120px;top:110px;font-size:84px">Walls first. Then speed.</div>
+  <div class="chart" id="ch1" style="left:120px"></div>
+  <div class="chart" id="ch2" style="left:700px"></div>
+  <div class="chart" id="ch3" style="left:1280px"></div>
+  <div class="foot" style="left:120px;right:120px">Booked means a submitted entry in the accounting database with the right supplier, date and amount. Seconds also reflect engine speedups made during the run (adaptive waits from block 4, faster screen grabs from block 7).</div>
+</section>
+
+<section class="scene" id="race">
+  <div class="kicker dim" style="position:absolute;left:160px;top:90px">The same entry job, three ways</div>
+  <div class="serif" style="position:absolute;left:160px;top:130px;font-size:84px">What one invoice costs.</div>
+  <div class="row3" id="racerow" style="top:330px"></div>
+  <div class="foot" id="racefoot"></div>
+</section>
+
+<section class="scene" id="end">
+  <div class="serif" id="endbig" style="position:absolute;left:160px;top:250px;font-size:150px;line-height:1.02">A clerk that gets better<br><i class="s1">every ten invoices.</i></div>
+  <div id="endrepo" class="mono" style="position:absolute;left:160px;top:700px;font-size:44px;font-weight:700"></div>
+  <div id="endsub" style="position:absolute;left:160px;top:780px;font-size:30px;color:#C9CBD3;font-weight:500">Open source. Jev for the reflexes, Fable 5.1 for the reflection. Built by Bles Software.</div>
+</section>
+
+<canvas id="grain" width="640" height="360"></canvas>
+<script src="data.js"></script>
+<script>
+const D = window.DATA, FPS = 30;
+const $ = id => document.getElementById(id);
+const clamp = (x,a=0,b=1) => Math.min(b,Math.max(a,x));
+const seg = (t,a,b) => clamp((t-a)/(b-a));
+const eo = x => 1-Math.pow(1-x,3), eio = x => x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+const lerp = (a,b,x) => a+(b-a)*x;
+const pad = (n,w) => String(n).padStart(w,'0');
+const money = (x,d=4) => '$'+x.toFixed(d);
+
+// ---- timeline
+const heroSecs = D.hero.frames / FPS;
+const T = {}; let cur = 0;
+for (const [name,len] of [['hook',6.6],['job',heroSecs+1.2],['how',17],['loop',.8+D.blocks.length*2.75+3.2],['chart',10],['race',D.frontier?9:0],['end',7.5]]) { T[name]=[cur,cur+len]; cur+=len; }
+window.TOTAL_FRAMES = Math.round(cur*FPS);
+
+// ---- static content
+$('h3').textContent = `30 real supplier invoices · a desktop accounting app with no API · ${money(D.blocks[D.blocks.length-1].cost_avg,4)} of model cost per invoice`;
+$('jobspeed').textContent = D.hero.speed===1 ? 'real time' : `${D.hero.speed}× speed`;
+$('jobtag').textContent = `invoice #${D.hero.iteration} · playbook v${D.hero.playbook}`;
+$('fields').innerHTML = [['Supplier',D.hero.read.supplier],['Invoice no.',D.hero.read.number],['Date',D.hero.read.date],['Amount',D.hero.read.currency+' '+D.hero.read.amount.toFixed(2)],['Expense item',D.hero.read.category],['Booked as',D.hero.row||'']].map(([a,b])=>`<div><span>${a}</span><b>${b}</b></div>`).join('');
+$('n1lat').textContent = D.totals.jev_latency.toFixed(2)+' s'; $('n1cost').textContent = money(D.totals.jev_cost_per_call,5);
+$('endrepo').innerHTML = `<span class="dim">github.com/</span>${D.repo}`;
+const evs = D.hero.events;
+$('evs').innerHTML = evs.map((e,i)=>`<div class="ev" id="ev${i}"><div class="k ${e.source==='reflex'?'s2':'s1'}">${e.kind}</div><div class="t">${e.detail||''}</div><div class="bar"><i style="width:${Math.round(e.conf*100)}%;background:${e.source==='reflex'?'var(--s2)':'var(--s1)'}"></i></div></div>`).join('');
+$('lbars').innerHTML = D.blocks.map((b,i)=>`<div class="lb" id="lb${i}" style="left:${i*190}px"><em id="lbe${i}"></em><div class="track"><div class="stage">${['typed into nothing','supplier lands','supplier and date land','rewrite broke step one','stuck in the item row','','','',''][i]||''}</div><div class="fill" id="lbf${i}" style="background:${b.ok?'var(--s1)':'var(--bad)'}"></div></div><u class="${b.ok?'s1':'dim'}">v${b.version}</u><small>invoices ${b.from}–${b.to}</small></div>`+(i<D.blocks.length-1?`<div class="dia" id="dia${i}" style="left:${i*190+159}px"></div>`:'')).join('');
+const charts = [['ch1','Wasted steps','wasted_share',v=>Math.round(v*100)+'%'],['ch2','Seconds per booked invoice','sec_ok',v=>v?v.toFixed(0)+'s':''],['ch3','Jev calls per booked invoice','calls_ok',v=>v?v.toFixed(0):'']];
+charts.forEach(([id,title])=>{ $(id).innerHTML = `<h3>${title}</h3><div class="bars" style="gap:10px">${D.blocks.map((b,i)=>`<div class="b" id="${id}b${i}" style="background:${b.ok?'var(--s1)':'#3a3f50'}"><em style="font-size:22px;top:-36px"></em><u style="font-size:16px">v${b.version}</u></div>`).join('')}</div>`; });
+if (D.frontier) {
+  const f = D.frontier, j = D.blocks[D.blocks.length-1];
+  $('racerow').innerHTML = `<div style="border-color:#4a5e17"><h3 class="s1">Jev · coached by Fable 5.1</h3><div class="n s1">${money(j.cost_avg,4)}</div><p>${D.jev_model_sec.toFixed(1)} s of model time per invoice · ${j.ok}/${j.usd} booked<br>text of the screen, one choice per step</p></div>
+   <div><h3>${f.label}</h3><div class="n">${money(f.cost_avg,2)}</div><p>${f.model_sec_avg.toFixed(0)} s of model time per invoice · ${f.ok}/${f.n} booked<br>one screenshot per step, ${f.steps_avg.toFixed(0)} steps</p></div>
+   <div style="border-style:dashed"><h3 class="dim">Human bookkeeper</h3><div class="n dim">~$0.80</div><p>assumption, not measured: 2 minutes per invoice at $24 an hour</p></div>`;
+  $('racefoot').textContent = f.note;
+}
+
+// ---- image cache
+const cache = {};
+function img(el, src) { return new Promise(res => { if (el.dataset.src===src) return res(); el.dataset.src=src; let im=cache[src]; if(!im){ im=new Image(); im.src=src; cache[src]=im; }
+  const done=()=>{ el.src=src; (el.decode?el.decode():Promise.resolve()).then(res,res); }; if (im.complete) done(); else { im.onload=done; im.onerror=res; } }); }
+
+// ---- grain
+const gc = $('grain').getContext('2d');
+function grain(f){ let s=(f*2654435761)>>>0; const id=gc.createImageData(640,360), d=id.data; for(let i=0;i<d.length;i+=4){ s^=s<<13; s>>>=0; s^=s>>17; s^=s<<5; s>>>=0; const v=(s&1)?255:0; d[i]=d[i+1]=d[i+2]=v; d[i+3]=(s>>>8)%9; } gc.putImageData(id,0,0); }
+
+function show(id, t, a, b, fade=.45){ const o = Math.min(seg(t,a,a+fade), 1-seg(t,b-fade,b)); $(id).style.opacity = (t>=a && t<=b) ? o : 0; return t>=a-0.01 && t<=b+0.01; }
+
+window.pose = async function(f){
+  const t = f/FPS, jobs=[];
+  grain(f);
+  const g=$('glow'); g.style.left=(260+Math.sin(t*.35)*380)+'px'; g.style.top=(-420+Math.cos(t*.27)*260)+'px';
+  g.style.background = (t>T.how[0] && t<T.chart[0]) ? 'var(--s2)' : 'var(--s1)';
+
+  // HOOK
+  if (show('hook',t,T.hook[0],T.hook[1],.3)) { const u=t-T.hook[0];
+    const a=seg(u,.15,.9), aOut=seg(u,2.5,2.9); $('h1').style.opacity=eo(a)*(1-aOut); $('h1').style.transform=`translateY(${lerp(60,0,eo(a))-aOut*40}px) scale(${1+u*.012})`;
+    const b=seg(u,2.9,3.6); $('h2').style.opacity=eo(b); $('h2').style.transform=`translateY(${lerp(60,0,eo(b))}px) scale(${1+(u-2.9)*.012})`;
+    $('h3').style.opacity=eo(seg(u,4.0,4.8)); $('h3').style.transform=`translateY(${lerp(24,0,eo(seg(u,4.0,4.8)))}px)`;
+    const fl=$('hookflash'); const k=Math.floor(u*FPS*2)%D.hero.frames; jobs.push(img(fl,`frames/hero/${pad(k+1,5)}.jpg`)); fl.style.opacity = u>2.9 ? .38*eo(seg(u,2.9,3.4)) : 0; fl.style.transform=`scale(${1.08+u*.01})`; }
+
+  // JOB
+  if (show('job',t,T.job[0],T.job[1])) { const u=t-T.job[0]; const k=clamp(Math.floor(u*FPS),0,D.hero.frames-1);
+    jobs.push(img($('heroimg'),`frames/hero/${pad(k+1,5)}.jpg`));
+    const clipT=k/FPS*D.hero.speed; let spent=0, shown=0;
+    evs.forEach((e,i)=>{ const el=$('ev'+i); const on=clipT>=e.t; if(on){ shown++; spent+=e.cost; } el.dataset.on=on?1:0; });
+    evs.forEach((e,i)=>{ const el=$('ev'+i); const age=(clipT-e.t); const idx=shown-1-i; const y=idx*92 - (1-eo(clamp(age/.35)))*40; el.style.opacity = clipT>=e.t ? clamp(1-idx*.17,0,1)*eo(clamp(age/.3)) : 0; el.style.transform=`translateY(${y}px)`; });
+    $('mcost').textContent=money(D.hero.read_cost+spent,4); $('mtime').textContent=(D.hero.read_seconds+clipT).toFixed(1)+'s';
+    const caps=D.hero.captions; let c=caps[0]; for(const x of caps) if(clipT>=x.t) c=x; $('jobcap').innerHTML=c.html; $('jobcap').style.opacity=eo(clamp((clipT-c.t)/.4)); }
+
+  // HOW
+  if (show('how',t,T.how[0],T.how[1])) { const u=t-T.how[0];
+    [['n1',.6],['n3',2.2],['n2',4.0],['n4',6.4],['n5',9.2]].forEach(([id,at])=>{ const p=eo(seg(u,at,at+.7)); $(id).style.opacity=p; $(id).style.transform=`translateY(${lerp(40,0,p)}px) scale(${1+Math.sin(u*.8+at)*.004})`; });
+    $('howtitle').style.transform=`translateX(${-u*2}px)`;
+    const paths=[['M680 420 L730 420','var(--s1)',2.2],['M1190 420 L1240 420','var(--s2)',4.0],['M1520 640 C1520 820 1300 830 1190 830','var(--s2)',6.4],['M730 830 C520 830 400 760 400 640','var(--s1)',7.4]];
+    $('wire').innerHTML=paths.map(([d,c,at])=>`<path d="${d}" stroke="${c}" stroke-dasharray="10 12" stroke-dashoffset="${-u*40}" opacity="${eo(seg(u,at,at+.6))*.9}"/>`).join('');
+    const logl=D.hero.events.slice(0,5).map(e=>`${e.kind.padEnd(14)} ${e.conf.toFixed(2)}`); const nl=Math.floor(seg(u,2.6,6)*logl.length+.001); $('logtxt').innerHTML=logl.slice(0,Math.max(1,nl)).join('<br>')+'<br><span class="dim">… every step, every outcome</span>';
+    const cyc=(u%4)/4; const P=[[400,640],[400,420],[960,420],[1520,420],[1520,640],[1520,830],[960,830],[400,830],[400,640]]; const pos=x=>{ const s=x*(P.length-1), i=Math.min(P.length-2,Math.floor(s)), fr=s-i; return [lerp(P[i][0],P[i+1][0],fr),lerp(P[i][1],P[i+1][1],fr)]; };
+    const a=pos(cyc), b=pos((cyc+.5)%1); $('p1').style.cssText+=`;left:${a[0]}px;top:${a[1]}px;opacity:${u>9?0.9:0}`; $('p2').style.cssText+=`;left:${b[0]}px;top:${b[1]}px;opacity:${u>9?0.9:0}`; }
+
+  // LOOP
+  if (show('loop',t,T.loop[0],T.loop[1])) { const u=t-T.loop[0], N=D.blocks.length, step=2.75, at=i=>.8+i*step;
+    const cur=clamp(Math.floor((u-.8)/step),0,N-1);
+    const titles=['Thirty invoices in. <i class="bad">Nothing booked.</i>','Thirty invoices in. <i class="bad">Nothing booked.</i>','Thirty invoices in. <i class="bad">Nothing booked.</i>','But every pass had removed <i class="s2">one wall.</i>','But every pass had removed <i class="s2">one wall.</i>','Pass five. <i class="s1">The last wall falls.</i>','Then it stopped making mistakes.','Then it stopped making mistakes.','Same model. <i class="s1">Better questions.</i>'];
+    $('looptitle').innerHTML=titles[cur]; const firstOf=titles.indexOf(titles[cur]); $('looptitle').style.opacity=eo(seg(u,at(firstOf)-.2,at(firstOf)+.5)); $('looptitle').style.transform=`translateX(${-(u-at(firstOf))*2.5}px)`;
+    D.blocks.forEach((b,i)=>{ const p=eo(seg(u,at(i),at(i)+.6)), q=eo(seg(u,at(i)+.3,at(i)+1.5)); const el=$('lb'+i); el.style.opacity=p; el.style.transform=`translateY(${lerp(40,0,p)}px)`;
+      $('lbf'+i).style.height=(b.ok? b.rate*100*q : 3*q)+'%'; $('lbe'+i).textContent=`${Math.round(b.ok*q)}/${b.usd}`; $('lbe'+i).className=b.ok?'s1':'dim';
+      if(i<N-1){ const d=$('dia'+i); const dp=eo(seg(u,at(i)+1.5,at(i)+2.0)); d.style.opacity=dp; d.style.transform=`rotate(45deg) scale(${lerp(.2,1,dp)*(1+Math.sin(u*3+i)*.04)})`; } });
+    const ci = cur<2?0:cur<5?1:2; const n=D.montage_frames[ci]; jobs.push(img($('clipL'),`frames/b${ci+1}/${pad(Math.floor(u*FPS)%n+1,5)}.jpg`)); $('clipTag').textContent=`playbook v${D.blocks[[0,2,8][ci]].version} · ${D.montage_speed}×`;
+    const P=D.passes[cur]; const pc=$('pc'); if(P && u>at(cur)+1.4){ const ps=at(cur)+1.4; pc.innerHTML=`<h3>System 2 pass ${cur+1} · ${P.steps_read} logged steps read in ${P.seconds.toFixed(0)} s · v${P.from} → v${P.to}</h3><div class="big serif">${P.learned}</div>`; const o=Math.min(eo(seg(u,ps,ps+.4)),1-seg(u,at(cur+1)-.25,at(cur+1))); pc.style.opacity=o; pc.style.transform=`translateY(${lerp(30,0,eo(seg(u,ps,ps+.4)))}px)`; }
+    else if(cur===N-1 && u>at(cur)+1.2){ const b=D.blocks[N-1]; pc.innerHTML=`<h3 style="color:var(--s1)">Block ${N} · playbook v${b.version}</h3><div class="big serif">${b.ok} of ${b.usd} booked correctly. ${b.sec_ok.toFixed(0)} seconds and ${money(b.cost_avg,4)} per invoice. Zero wasted steps.</div>`; const o=eo(seg(u,at(cur)+1.2,at(cur)+1.7)); pc.style.opacity=o; pc.style.borderColor='#4a5e17'; pc.style.background='#11160a'; }
+    else pc.style.opacity=0; }
+
+  // CHART
+  if (show('chart',t,T.chart[0],T.chart[1])) { const u=t-T.chart[0]; $('charttitle').style.transform=`translateX(${-u*3}px)`;
+    charts.forEach(([id,title,key,fmt],ci)=>{ const vals=D.blocks.map(b=>b[key]||0), mx=Math.max(...vals,.0001); $(id).style.opacity=eo(seg(u,.4+ci*.5,1.1+ci*.5));
+      D.blocks.forEach((b,i)=>{ const p=eo(seg(u,1+ci*.5+i*.12,2.2+ci*.5+i*.12)); const el=$(`${id}b${i}`); el.style.height=Math.max(6,(vals[i]/mx)*380*p*(1+Math.sin(u*1.3+i)*.004))+'px'; el.querySelector('em').textContent=vals[i]?fmt(vals[i]*p):''; el.style.opacity=vals[i]||key==='wasted_share'?1:.25; }); }); }
+
+  // RACE
+  if (D.frontier && show('race',t,T.race[0],T.race[1])) { const u=t-T.race[0]; [...$('racerow').children].forEach((el,i)=>{ const p=eo(seg(u,.5+i*.6,1.3+i*.6)); el.style.opacity=p; el.style.transform=`translateY(${lerp(50,0,p)}px) scale(${1+u*.002})`; }); $('racefoot').style.opacity=eo(seg(u,2.6,3.4)); }
+
+  // END
+  if (show('end',t,T.end[0],T.end[1]+1,.5)) { const u=t-T.end[0]; const p=eo(seg(u,.2,1.1)); $('endbig').style.opacity=p; $('endbig').style.transform=`translateY(${lerp(50,0,p)}px) scale(${1+u*.008})`; $('endrepo').style.opacity=eo(seg(u,1.6,2.3)); $('endsub').style.opacity=eo(seg(u,2.3,3)); $('end').style.opacity=Math.min(1,seg(t,T.end[0],T.end[0]+.5)); }
+  await Promise.all(jobs);
+};
+window.READY = document.fonts.ready.then(()=>true);
+</script>
+</body>
+</html>

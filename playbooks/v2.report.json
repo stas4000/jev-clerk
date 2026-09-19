@@ -1,0 +1,97 @@
+{
+ "block": "11-20",
+ "from_version": 1,
+ "to_version": 2,
+ "model": "claude-fable-5-1",
+ "prompt_chars": 85513,
+ "seconds": 221.0,
+ "cost_usd": 0.7136652500000001,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 47181,
+  "output_tokens": 14037,
+  "output_tokens_details": {
+   "thinking_tokens": 8577
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 0,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "not_available",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 14037,
+    "cache_read_input_tokens": 47181,
+    "cache_creation_input_tokens": 0,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 0
+    },
+    "type": "message",
+    "model": null
+   }
+  ],
+  "speed": "standard"
+ },
+ "repair_seconds": 47.2,
+ "diagnosis": [
+  "All 8 invoices that reached the form failed at the Date field; none got as far as Save. Supplier entry worked 8 out of 8 times: click the lower 'Supplier' at y≈213, type, press Return, and Account becomes 'Creditors' (S4, S11, S25, S29, S34).",
+  "The first click on the date line ('Sep 19, 2026 ...') turns it into a native date-time input reading '19/09/2026, 15:39:09' and opens a calendar popup ('September 2026', 'Clear', 'Today'; S6, S13, S27). With the popup open, type_date did nothing: step 6 shows screen_changed=False in every one of the 8 invoices. The popup appears to swallow the keystrokes.",
+  "The date format was also wrong. The playbook typed MM/DD/YYYY, but the field is day-first (DD/MM/YYYY): today shows as '19/09/2026'.",
+  "A second click on the date line closes the popup but puts the cursor in the YEAR segment, because the click lands at the centre of the line. Typing then corrupts the year: invoice 13, step 8 produced '19/09/72620, 23:40:05' (S15), and later a red 'Date is required' (S16).",
+  "Jev then looped on the date line. Steps 8 to 11 of invoices 14, 15, 16, 17, 18 and 20 were the same click with screen_changed=False, and the run was aborted. That is 5 wasted steps per invoice.",
+  "Invoice 13, step 12: after type_item the dropdown was still open and the item cell still focused. Jev chose type_amount (conf 0.25), so '10.00' landed in the item cell ('Al Models & API10.', S20/S21). The Rate cell (the '$0.00' at x≈1079 in the row) was never clicked.",
+  "The Anthropic amount was read wrong twice (invoices 14 and 18). The picked line '$200.00 USD due July 30, 2026' contains a date, and the year 2026 was parsed as the amount (2026.0 instead of 200.00).",
+  "Invoices 11 and 19 (WellyBox, ILS) passed with 0 steps, so the currency hints work and are kept."
+ ],
+ "changes": [
+  {
+   "change": "date_typing: pre_keys ['escape'], format '%d%m%Y'",
+   "why": "The calendar popup blocks typing and the field is day-first, so Escape should close the popup and zero-padded digits should fill day, month and year in turn; that Escape leaves the cursor on the day segment is my assumption, not shown in the log.",
+   "evidence": "Step 6 of invoices 12 to 18 and 20 (typing with the popup open changed nothing); S6 shows '19/09/2026, TIME'; invoice 13, steps 8/9 show typing lands once the popup is closed"
+  },
+  {
+   "change": "Date hints: click the date line ONCE, then type_date, and never click it again",
+   "why": "The second click moves the cursor to the year segment, and repeated clicks were the loop that ended every run.",
+   "evidence": "Invoice 13, steps 7 to 9 and 17/18 ('19/09/72620'); invoices 14 to 20, steps 8 to 11"
+  },
+  {
+   "change": "Hint explaining the DD/MM/YYYY display and how to recognise an entered date",
+   "why": "Jev has to accept '30/07/2026, ...' or 'Jul 30, 2026' as the date being entered and move on to Add Row.",
+   "evidence": "S6/S7 against S5/S8 (edit format versus display format)"
+  },
+  {
+   "change": "Reflex: press_return after type_supplier",
+   "why": "Return selected the typed supplier every time, so the step no longer needs a Jev call.",
+   "evidence": "Step 4 of all 8 invoices; S4/S11/S25/S29/S34 then show Account = 'Creditors'"
+  },
+  {
+   "change": "Reflex: press_return after type_item",
+   "why": "The item cell uses the same dropdown as Supplier, and without a confirm step Jev typed the amount into the item cell; this one is by analogy, since the log never shows Return pressed on the item cell.",
+   "evidence": "Invoice 13, steps 11/12; S18 (dropdown 'Al Models & API' plus 'Create' still open); S20 'Al Models & API10.'"
+  },
+  {
+   "change": "amount_typing: post_keys ['tab'], plus a hint naming the Rate cell",
+   "why": "Tab commits the rate without an extra decision, and Jev needs to know which of the three '$0.00' lines is the Rate cell.",
+   "evidence": "S8/S10 row: '1'@930, '$0.00'@1079, '$ 0.00'@1241 against the totals at x≈815; invoice 13 never clicked the rate"
+  },
+  {
+   "change": "Read: total instruction and hint against lines containing a date",
+   "why": "The year in '... due July 30, 2026' was parsed as the amount.",
+   "evidence": "Invoices 14 and 18: amount 2026.0, read_ok amount=False"
+  },
+  {
+   "change": "Settle times slightly lower (default 1.0, click_item 1.2); typing kinds stay at 1.2",
+   "why": "Screens were stable after clicks, while the dropdown still needs time to filter before the Return reflex fires.",
+   "evidence": "No half-drawn screens in S1 to S45"
+  }
+ ],
+ "expected_effect": "If Escape leaves the cursor on the day segment, the date should land in one click plus one type_date, the date-click loop should stop, and with Return pressed automatically after supplier and item, Jev should reach Rate, Save and Submit for the first time."
+}

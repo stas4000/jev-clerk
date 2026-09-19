@@ -1,0 +1,81 @@
+{
+ "block": "51-60",
+ "from_version": 5,
+ "to_version": 6,
+ "model": "claude-fable-5-1",
+ "prompt_chars": 180506,
+ "seconds": 161.1,
+ "cost_usd": 2.39729925,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 96218,
+  "cache_read_input_tokens": 1277,
+  "output_tokens": 9452,
+  "output_tokens_details": {
+   "thinking_tokens": 2130
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 96218,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "not_available",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 9452,
+    "cache_read_input_tokens": 1277,
+    "cache_creation_input_tokens": 96218,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 96218
+    },
+    "type": "message",
+    "model": null
+   }
+  ],
+  "speed": "standard"
+ },
+ "repair_seconds": 62.3,
+ "diagnosis": [
+  "Entry flow under v5 is clean. All 8 booked invoices (51, 52, 54-58, 60) ran the same 15 steps with 0 wasted: lower 'Supplier' -> type_supplier (+Return) -> date line -> type_date -> '+ Add Row' -> '× Item' -> type_item (+Return) -> '$0.00' below Rate -> type_amount -> Save -> Yes -> Submit -> Yes. Keep the enter logic as it is.",
+  "The only failure, invoice 59 (Pinecone), is a read error, not an entry error. Jev picked the total line '$49.87' (confidence 0.48, read_ok amount=False), entered it correctly and submitted it as PINV-1008 with the wrong amount.",
+  "Likely cause is my v5 wording 'Pick the SHORTEST line that is just an amount'. On an invoice with several bare amounts (line item, subtotal), that wording favours a line-item figure. The v4 hint recorded a Pinecone line '$50.00 USD due May 1, 2026', and invoice 59 is Pinecone dated May 1, 2026, so the true total is almost certainly $50.00 and $49.87 is a line item or subtotal.",
+  "The 'due <date>' line is dangerous to pick because the year gets parsed as the amount. But the amount inside it is the true total. Jev should use it as a cross-check and pick the other line that shows the same amount.",
+  "Invoice 53 (WellyBox, ILS) was handled with 0 steps and success=True. The currency read is correct, so nothing changes there.",
+  "Speed: two decisions were identical in 8 of 8 runs and carry no real choice. After type_date Jev always clicked '+ Add Row' (641,473; conf 0.95-0.97). After type_amount Jev always clicked 'Save' (1302,67; conf 0.79-0.91). Each costs one Jev call plus settle time and can be a reflex.",
+  "Every screen captured after an action was fully drawn at the current settle times (S7, S12, S14 and similar). That leaves room for a small reduction."
+ ],
+ "changes": [
+  {
+   "change": "Rewrite read.instructions.total and the total hints: prefer 'Amount due'/'Total', cross-check with the amount in the 'due <date>' line, never pick line-item or subtotal amounts",
+   "why": "The 'shortest bare amount' rule made Jev pick $49.87 on the Pinecone invoice when the amount due was different.",
+   "evidence": "invoice 59: total line '$49.87', conf 0.48, amount read_ok=False; v4 hint cites Pinecone '$50.00 USD due May 1, 2026'"
+  },
+  {
+   "change": "Reflex: after type_date click_text '+ Add Row'",
+   "why": "Jev made this exact click right after type_date in every run, and the text appears once on screen at that moment.",
+   "evidence": "invoices 51-60, step 6 every time; screens S6, S20, S34, S47, S60, S73, S84, S97, S110"
+  },
+  {
+   "change": "Reflex: after type_amount click_text 'Save'",
+   "why": "Jev clicked Save right after type_amount in every run; if the amount did not land, the existing '$0.00 -> No' popup hint still catches it.",
+   "evidence": "invoices 51-60, step 12 every time; screens S12, S26, S40, S53, S66, S79, S90, S103, S116"
+  },
+  {
+   "change": "Update kind_instructions and hints so Jev knows the engine now clicks Add Row and Save itself",
+   "why": "Stops a second Add Row (which creates empty Row 2) and a second Save click, while keeping a fallback if a reflex did not fire.",
+   "evidence": "hint 'After the date...' and hint 'After type_amount...' in v5"
+  },
+  {
+   "change": "Trim settle_seconds slightly (click_item 1.2->1.0, press_return 1.2->1.0, type_amount 1.3->1.2, type_supplier/type_item 1.2->1.1)",
+   "why": "All post-action screens were complete, so a small cut is safe and saves about 2 seconds per invoice.",
+   "evidence": "S1-S119 show fully drawn forms and popups after every step"
+  }
+ ],
+ "expected_effect": "The Pinecone-type total error should disappear (9/9 booked correctly), and each invoice should drop from 15 to about 13 Jev-visible steps and from about 44 to about 37 seconds."
+}

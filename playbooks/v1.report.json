@@ -1,0 +1,96 @@
+{
+ "block": "1-10",
+ "from_version": 0,
+ "to_version": 1,
+ "model": "claude-fable-5-1",
+ "prompt_chars": 25580,
+ "seconds": 68.7,
+ "cost_usd": 0.54253175,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 13021,
+  "cache_read_input_tokens": 1167,
+  "output_tokens": 5636,
+  "output_tokens_details": {
+   "thinking_tokens": 1726
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 13021,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "not_available",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 5636,
+    "cache_read_input_tokens": 1167,
+    "cache_creation_input_tokens": 13021,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 13021
+    },
+    "type": "message",
+    "model": null
+   }
+  ],
+  "speed": "standard"
+ },
+ "diagnosis": [
+  "0/10 invoices booked. No invoice got past the supplier field, and no booked row exists for any of them.",
+  "Reading the PDFs was fine: supplier, number, date and amount were correct on all 10. The only miss was currency on inv_02, where the total was OCR'd as 'N258.42' and read as USD (confidence 0.39). The 'N' is most likely a mis-read ₪, because WellyBox is an Israeli vendor.",
+  "'Make Entry' reliably opens the New Entry form, but no field is focused afterwards. In all 10 invoices, type_supplier at step 2 gave screen_changed=False, and the supplier name never shows up in any OCR screen (S2 to S8 still show the placeholder 'Supplier' at 917,213).",
+  "Jev then clicked the field label 'Supplier' at [903,181] over and over; every such click logged in inv 2 to 10 changed nothing. The real input is the placeholder line 'Supplier' at [917,213], just below the label, and it was never clicked once.",
+  "In inv_01, Tab did change the screen, but it only moved an invisible focus. '09/14/2026', 'AI Models & API' and '25.00' never landed: the date stayed 'Sep 19, 2026', the totals stayed $0.00, and no item row appeared. 'Add Row' was never clicked and 'Save' was never clicked.",
+  "Clicking the 'Purchase Invoice' title at [608,68] changed nothing (inv_01 steps 10 and 12, inv_06 step 4).",
+  "The 'typed so far' state misleads Jev: it treats supplier, date and amount as entered when nothing is on screen. Confidence drops to 0.2-0.4 exactly where it is lost.",
+  "The date input format is still untested, because no date was ever typed into a focused date field. The field displays 'Sep 19, 2026'. I kept %m/%d/%Y and will check it in the next block."
+ ],
+ "changes": [
+  {
+   "change": "Click the input, not the label",
+   "why": "The label 'Supplier' at y=181 is dead; the clickable input is the lower 'Supplier' placeholder at y=213.",
+   "evidence": "inv 2-10 steps 3-5: every click on 'Supplier'@[903,181] gave screen_changed=False; S6 line 14 'Supplier'@917,213 never clicked"
+  },
+  {
+   "change": "Never type without clicking a field first",
+   "why": "Typing right after 'Make Entry' lands nowhere because nothing is focused.",
+   "evidence": "step 2 of all 10 invoices: screen_changed=False, name absent from S2-S8"
+  },
+  {
+   "change": "Judge progress from the screen, not from 'typed so far'",
+   "why": "Jev moved on to the date, item and amount while every field was still empty.",
+   "evidence": "inv_01 steps 4-9: date still 'Sep 19, 2026', totals $0.00"
+  },
+  {
+   "change": "Explicit field order with on-screen anchors (Supplier, Date, Add Row, Item, Rate, Save, Submit)",
+   "why": "Jev has never seen the app and never reached Add Row or Save.",
+   "evidence": "inv_01 steps 6-13; S6 lines 'Add Row'@486,472 and 'Save'@1302,67"
+  },
+  {
+   "change": "Ban dead clicks and Tab navigation",
+   "why": "Clicking the title and tabbing between fields wasted steps and changed nothing useful.",
+   "evidence": "inv_01 steps 10 and 12, inv_06 step 4; inv 2-4, 8-10 step 3"
+  },
+  {
+   "change": "Stricter 'done' criterion",
+   "why": "The database only counts submitted invoices, and 'Draft' is visible on the form.",
+   "evidence": "S2-S8 line 'Draft'"
+  },
+  {
+   "change": "Currency read hint for garbled symbols",
+   "why": "'N258.42' was read as USD and was wrong.",
+   "evidence": "inv_02 read_ok currency=False, confidence 0.39"
+  },
+  {
+   "change": "Raise click_item settle time slightly",
+   "why": "The form layout shifts after opening (form x=608 in S2, x=418 in S4), so Jev may be seeing a half-drawn screen.",
+   "evidence": "S2 vs S4 coordinates"
+  }
+ ],
+ "expected_effect": "Jev should click the real Supplier input before typing, so the supplier value lands and the run can move on to date, item row, amount, Save and Submit. The next log will then show dropdown and date-format behaviour that can be compiled into reflexes."
+}

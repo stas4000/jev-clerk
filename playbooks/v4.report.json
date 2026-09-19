@@ -1,0 +1,80 @@
+{
+ "block": "31-40",
+ "from_version": 3,
+ "to_version": 4,
+ "model": "claude-fable-5-1",
+ "prompt_chars": 37428,
+ "seconds": 76.2,
+ "cost_usd": 0.7261599999999999,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 18097,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 7284,
+  "output_tokens_details": {
+   "thinking_tokens": 1229
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 18097,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "not_available",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 7284,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 18097,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 18097
+    },
+    "type": "message",
+    "model": null
+   }
+  ],
+  "speed": "standard"
+ },
+ "diagnosis": [
+  "All 9 attempted invoices (31, 33-40) died the same way. Step 1 was type_supplier (conf 0.65-0.80, runner_up click_item) on the blank form with nothing focused. The screen did not change, the Return reflex changed nothing, and steps 3-4 repeated the same two actions before the run ended. Nothing was booked.",
+  "Screens S1-S4 show the form already open ('New Entry', 'Draft'), with the 'Supplier' placeholder still at 917,213 and the date 'Sep 19, 2026'. The keystrokes went nowhere because no field had been clicked.",
+  "Cause in my v3 rewrite: kind_instructions became a numbered list whose first rule is 'List screen -> Make Entry' and whose second rule hides the click inside 'click it; if your last action was that click -> type_supplier'. Code now opens the form for Jev, so step 1 has no last action and Jev skipped straight to typing. v2 said plainly 'Typing only works after you CLICKED the input field in the previous step'. v3 dropped that sentence.",
+  "Jev ignored the v3 hint 'If screen_changed=False choose a DIFFERENT action' for type_supplier: steps 1 and 3 are identical. The rule has to sit in the type_supplier criteria and at the top of kind_instructions.",
+  "The table has moved compared with the v2/v3 hints. Headers now read 'Item' x≈643, 'Rate' x≈986, 'Amount' x≈1073, and '+ Add Row' sits at x≈641 y≈473. The old hints said Add Row x≈486 and Rate cell x≈1079. x≈1079 is now the Amount column, so the absolute x hints would send Jev to the wrong cell. Hints must point to columns by their header.",
+  "Invoice 32 shows success=True with 0 steps and no booked row. It looks like a duplicate skip, so it gives no evidence about entry.",
+  "PDF reading was 10/10 correct on every field, so the read section stays unchanged."
+ ],
+ "changes": [
+  {
+   "change": "kind_instructions starts with the step-1 rule and restores 'typing only works after a click'",
+   "why": "Jev typed into an unfocused form on step 1 in every run.",
+   "evidence": "invoices 31, 33-40 step 1: type_supplier, screen_changed=False"
+  },
+  {
+   "change": "type_supplier criteria forbid it as the first action, after a non-click action, or after a type_supplier that changed nothing",
+   "why": "Jev repeated the same dead action at step 3.",
+   "evidence": "invoices 31-40 steps 1 and 3 are identical"
+  },
+  {
+   "change": "click_item criteria and the first hints say the form is already open and the first action is a click on the lower 'Supplier' (917,213)",
+   "why": "Code opens the form now, and click_item was already the runner-up in every run.",
+   "evidence": "S1-S4 line 16 'Supplier|917,213'; runner_up=click_item"
+  },
+  {
+   "change": "Row-cell hints now locate the cell under its column header instead of by absolute x",
+   "why": "The columns shifted, and x≈1079 is now under 'Amount', not 'Rate'.",
+   "evidence": "S1-S4: Rate header 986,422; Amount 1073,423; Add Row 641,473"
+  },
+  {
+   "change": "Merged the two loop hints and dropped the Make Entry hint as its own step",
+   "why": "Keeps the hint count under 25 and removes the misleading first step.",
+   "evidence": "S1-S4 show 'New Entry' at step 1"
+  }
+ ],
+ "expected_effect": "Jev should click the lower 'Supplier' input first, so the supplier name lands and the run continues into the date, item and amount steps that were reached in v2, now with column-relative cell targets."
+}

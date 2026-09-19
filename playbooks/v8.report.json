@@ -1,0 +1,74 @@
+{
+ "block": "71-80",
+ "from_version": 7,
+ "to_version": 8,
+ "model": "claude-fable-5-1",
+ "prompt_chars": 164530,
+ "seconds": 82.2,
+ "cost_usd": 2.14457925,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 87057,
+  "cache_read_input_tokens": 1277,
+  "output_tokens": 8062,
+  "output_tokens_details": {
+   "thinking_tokens": 1344
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 87057,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "not_available",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 8062,
+    "cache_read_input_tokens": 1277,
+    "cache_creation_input_tokens": 87057,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 87057
+    },
+    "type": "message",
+    "model": null
+   }
+  ],
+  "speed": "standard"
+ },
+ "diagnosis": [
+  "Entry was flawless in v7. All 8 entered invoices took exactly 15 steps, with 0 wasted steps and ~30 s each, and every reflex fired correctly (steps 3, 6, 9 and 12 in every invoice). None of the enter-side changes from v6 to v7 broke anything.",
+  "Both failures were read errors on the total, not entry errors. In invoices 74 and 78 (Anthropic, PBC), Jev picked the line '$200.00 USD due July 30, 2026' / '$200.00 USD due June 30, 2026'. The amount became 2026.00, and S39 and S89 show it booked as $2,026.00.",
+  "The v6 and v7 read text for the total is identical. The drop from 9/9 to 6/8 therefore does not come from the last rewrite: the trap hint has never reliably stopped this pick, and block 61-70 most likely just had no Anthropic invoice with this line.",
+  "Jev was confident on the wrong line (0.95 and 0.96), so it matches that line positively rather than guessing. The current instruction and hint quote the bad line verbatim several times, which may attract a small model.",
+  "The Composio category confidence is 0.42, split between Developer Tools in invoice 75 and SaaS Subscription in invoice 80. The referee does not check the item, so I left it alone.",
+  "Invoices 71 and 79 (WellyBox, ILS) were correctly skipped with 0 steps. The currency hints work, including the '~' mis-read."
+ ],
+ "changes": [
+  {
+   "change": "Rewrite read.instructions.total positively",
+   "why": "It now tells Jev that the right line starts with 'Amount due' / 'Total' or is a bare amount, and ends with the amount or currency code. It describes the wrong line by structure (contains a month name or a year) instead of quoting it as a candidate.",
+   "evidence": "Invoices 74 and 78: read picked '$200.00 USD due <month> 30, 2026' at conf 0.95-0.96, and the booked grandTotal was 2026."
+  },
+  {
+   "change": "Rewrite TOTAL TRAP 1 hint and add a self-check hint",
+   "why": "It states the consequence ($2,026.00 booked) and gives a simple test: the total line contains no month name and no '2026'. If the candidate line fails the test, Jev picks another line with the same amount.",
+   "evidence": "Invoices 74 and 78; S39 and S89 show Rate, Amount and Grand Total at $2,026.00."
+  },
+  {
+   "change": "Add hint that 2026.00 is never a plausible total",
+   "why": "It gives Jev a second cue tied to the visible year.",
+   "evidence": "Invoices 74 and 78 both read amount=2026.0."
+  },
+  {
+   "change": "Enter section unchanged",
+   "why": "All 8 entered invoices ran 15 steps with no waste, so the evidence demands no change.",
+   "evidence": "Invoices 72-80: wasted=0 and screen_changed=True on every step."
+  }
+ ],
+ "expected_effect": "Anthropic invoices should be read as $200.00 instead of 2026.00, bringing the block back to 100% while entry stays at 15 steps and ~30 s."
+}

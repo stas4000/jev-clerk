@@ -1,0 +1,55 @@
+{
+ "version": 0,
+ "author": "human baseline, knows nothing about this accounting app",
+ "read": {
+  "instructions": {
+   "supplier": "Which line holds the name of the company that issued this invoice?",
+   "number": "Which line holds the invoice number?",
+   "date": "Which line holds the invoice date?",
+   "total": "Which line holds the total amount of the invoice?",
+   "date_order": "How is the invoice date written?",
+   "currency": "Which currency is the invoice total in?",
+   "category": "Which expense item fits what was bought?"
+  },
+  "category_criteria": {
+   "AI Models & API": "AI models, AI subscriptions, inference or generation credits.",
+   "SaaS Subscription": "A business software subscription.",
+   "Cloud & Hosting": "Servers, hosting, storage, databases.",
+   "Developer Tools": "APIs, SDKs and tools used by developers."
+  }
+ },
+ "enter": {
+  "kind_instructions": "You are entering one supplier invoice into the accounting app, one action at a time. Which kind of action makes the most progress right now? Do not repeat an action that changed nothing.",
+  "item_instructions": "If clicking is the right move, which on-screen line should be clicked?",
+  "kinds": {
+   "click_item": "Click one of the on-screen lines (chosen in the item question).",
+   "type_supplier": "Type the supplier name into the focused field.",
+   "type_date": "Type the invoice date into the focused field.",
+   "type_item": "Type the expense item name into the focused field.",
+   "type_amount": "Type the invoice amount into the focused field.",
+   "press_return": "Press Return.",
+   "press_tab": "Press Tab to move to the next field.",
+   "press_escape": "Press Escape to close a popup or menu.",
+   "scroll_down": "Scroll down.",
+   "scroll_up": "Scroll up.",
+   "wait": "The screen is still changing; wait.",
+   "done": "The invoice is entered and submitted."
+  },
+  "hints": [],
+  "reflexes": [],
+  "date_typing": {
+   "format": "%m/%d/%Y",
+   "pre_keys": [],
+   "post_keys": []
+  },
+  "amount_typing": {
+   "pre_keys": [],
+   "post_keys": []
+  },
+  "settle_seconds": {
+   "default": 1.2
+  },
+  "min_confidence": 0.0,
+  "max_steps": 40
+ }
+}

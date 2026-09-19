@@ -1,0 +1,77 @@
+{
+ "version": 1,
+ "author": "system 2 (claude-fable-5-1)",
+ "read": {
+  "instructions": {
+   "supplier": "Which line holds the name of the company that issued this invoice?",
+   "number": "Which line holds the invoice number?",
+   "date": "Which line holds the invoice date?",
+   "total": "Which line holds the total amount of the invoice?",
+   "date_order": "How is the invoice date written?",
+   "currency": "Which currency is the invoice total in? Judge by the currency symbol or code printed on the invoice, not by the vendor's name.",
+   "category": "Which expense item fits what was bought?"
+  },
+  "category_criteria": {
+   "AI Models & API": "AI models, AI subscriptions, inference or generation credits.",
+   "SaaS Subscription": "A business software subscription.",
+   "Cloud & Hosting": "Servers, hosting, storage, databases.",
+   "Developer Tools": "APIs, SDKs and tools used by developers."
+  },
+  "hints": [
+   "A stray letter in front of the total (e.g. 'N258.42') is a mis-read currency symbol, not a dollar sign. 'N' is most likely the shekel sign (ILS). Look for other lines with a currency code before choosing USD.",
+   "'$' or 'US$' before the amount means USD."
+  ]
+ },
+ "enter": {
+  "kind_instructions": "You are entering one supplier invoice into the accounting app, one action at a time. Typing only works after you CLICKED the input field in the previous step. A value counts as entered only if you can see it in the screen lines; 'typed so far' does not prove it landed. Order: Make Entry -> click Supplier input -> type supplier -> pick option -> click date -> type date -> Add Row -> item -> rate/amount -> Save -> Submit. Which kind of action makes the most progress right now? Never repeat an action that changed nothing.",
+  "item_instructions": "If clicking is the right move, which on-screen line should be clicked? When the same text appears twice (label above, placeholder below), click the LOWER one: that is the input. Never click the sidebar, the 'Purchase Invoice' title, or a line whose last click changed nothing.",
+  "kinds": {
+   "click_item": "Click one of the on-screen lines: a button (Make Entry, Add Row, Save, Submit), an empty input placeholder to focus it, or a dropdown option.",
+   "type_supplier": "Type the supplier name. Only right after clicking the Supplier input (the lower 'Supplier' line, y about 213) and only if the supplier name is not yet visible on screen.",
+   "type_date": "Type the invoice date. Only right after clicking the date value line (e.g. 'Sep 19, 2026 TIME') under 'Date'.",
+   "type_item": "Type the expense item name. Only right after clicking the Item cell of a row created with 'Add Row'.",
+   "type_amount": "Type the invoice amount. Only right after clicking the Rate cell of the item row.",
+   "press_return": "Press Return to confirm the highlighted dropdown option or a typed value.",
+   "press_tab": "Press Tab to leave a field after its value is visibly on screen. Do not use Tab to find fields.",
+   "press_escape": "Press Escape to close a popup or menu that is blocking the form.",
+   "scroll_down": "Scroll down, only if a needed button or field is not among the screen lines.",
+   "scroll_up": "Scroll up, only if Save/Submit or the Supplier field is not among the screen lines.",
+   "wait": "The screen is still changing; wait.",
+   "done": "Only when the invoice was saved AND submitted: the form no longer shows 'Draft' or 'New Entry' and shows the supplier and the correct Grand Total."
+  },
+  "hints": [
+   "On the list screen ('No entries found' or a table), click 'Make Entry' to open a new Purchase Invoice form ('New Entry', 'Draft').",
+   "After 'Make Entry' NO field is focused. Typing now goes nowhere (seen 10 times). First click the input.",
+   "There are two 'Supplier' lines: the label at y≈181 does nothing when clicked (seen 20 times). Click the LOWER 'Supplier' at y≈213: that is the input. Then type_supplier.",
+   "After typing the supplier, a dropdown should list matches below the field: click the option line with the supplier name (the lower match), or press Return. If a 'Create' option is offered for the name, take it.",
+   "The supplier is entered only when its name is visible where the 'Supplier' placeholder at y≈213 was. If the placeholder 'Supplier' is still there, it is not entered.",
+   "Date: click the date value line under 'Date' (it reads like 'Sep 19, 2026 TIME', x≈958 y≈289), then type_date. It is entered only when that line shows the invoice date instead of today's date.",
+   "Item: click 'Add Row' (under the Items table header '# Item Tax Quantity Rate Amount'). A new row appears; click its Item cell (under the 'Item' column header), then type_item, then click the matching option or press Return.",
+   "Amount: click the row's cell under the 'Rate' column header, then type_amount, then press_tab. Check that 'Grand Total' shows the invoice amount, not $0.00.",
+   "When the supplier, date and Grand Total are all visible and correct, click 'Save' (top right, x≈1302 y≈67). Do not click 'Save' while Grand Total is $0.00.",
+   "After Save, a 'Submit' button should appear at the top right: click it, and if a confirmation popup appears, click its confirming button (Yes / Submit). Saving alone leaves a Draft, which does not count.",
+   "Never click the 'Purchase Invoice' title at the top (changed nothing 3 times) or sidebar lines (Dashboard, Sales, Purchases, Suppliers, Purchase Items, Reports, Setup).",
+   "Do not use press_tab to hunt for fields: focus is invisible and values typed that way never landed (invoice 1). Click the field you want.",
+   "If the last action shows screen_changed=False, choose a DIFFERENT action or a DIFFERENT line. Two identical no-change actions in a row is a loop.",
+   "If a red error or popup appears, read it: press_escape to close a menu, or click the field it names and fix it."
+  ],
+  "reflexes": [],
+  "date_typing": {
+   "format": "%m/%d/%Y",
+   "pre_keys": [],
+   "post_keys": []
+  },
+  "amount_typing": {
+   "pre_keys": [],
+   "post_keys": []
+  },
+  "settle_seconds": {
+   "default": 1.2,
+   "click_item": 1.4,
+   "press_tab": 0.8,
+   "press_escape": 0.8
+  },
+  "min_confidence": 0.0,
+  "max_steps": 40
+ }
+}

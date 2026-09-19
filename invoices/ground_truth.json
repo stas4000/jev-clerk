@@ -1,0 +1,242 @@
+[
+ {
+  "file": "inv_01.pdf",
+  "supplier": "Browser Use Inc.",
+  "number": "10DD484-0007",
+  "date": "2026-09-14",
+  "amount": 25.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_02.pdf",
+  "supplier": "WellyBox, Inc.",
+  "number": "ROF9BBNO-0009",
+  "date": "2026-09-16",
+  "amount": 258.42,
+  "currency": "ILS"
+ },
+ {
+  "file": "inv_03.pdf",
+  "supplier": "X Developer Platform",
+  "number": "CU2RTIIJ-0002",
+  "date": "2026-09-09",
+  "amount": 25.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_04.pdf",
+  "supplier": "Suno",
+  "number": "TPD1BVMQ-0008",
+  "date": "2026-09-09",
+  "amount": 10.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_05.pdf",
+  "supplier": "Browser Use Inc.",
+  "number": "10DD484-0006",
+  "date": "2026-09-07",
+  "amount": 25.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_06.pdf",
+  "supplier": "Venice.ai",
+  "number": "F1P2CANV-0002",
+  "date": "2026-09-04",
+  "amount": 25.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_07.pdf",
+  "supplier": "Browser Use Inc.",
+  "number": "10DD484-0005",
+  "date": "2026-08-31",
+  "amount": 25.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_08.pdf",
+  "supplier": "Anthropic, PBC",
+  "number": "JAZ1MYRW-0022",
+  "date": "2026-08-30",
+  "amount": 200.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_09.pdf",
+  "supplier": "Composio",
+  "number": "UZHHRTXI-0004",
+  "date": "2026-08-30",
+  "amount": 29.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_10.pdf",
+  "supplier": "Browser Use Inc.",
+  "number": "10DD484-0004",
+  "date": "2026-08-28",
+  "amount": 25.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_11.pdf",
+  "supplier": "WellyBox, Inc.",
+  "number": "ROF9BBNO-0008",
+  "date": "2026-08-16",
+  "amount": 258.42,
+  "currency": "ILS"
+ },
+ {
+  "file": "inv_12.pdf",
+  "supplier": "Venice.ai",
+  "number": "F1P2CANV-0001",
+  "date": "2026-08-15",
+  "amount": 10.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_13.pdf",
+  "supplier": "Suno",
+  "number": "TPD1BVMQ-0007",
+  "date": "2026-07-26",
+  "amount": 10.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_14.pdf",
+  "supplier": "Anthropic, PBC",
+  "number": "JAZ1MYRW-0021",
+  "date": "2026-07-30",
+  "amount": 200.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_15.pdf",
+  "supplier": "Composio",
+  "number": "UZHHRTXI-0003",
+  "date": "2026-07-30",
+  "amount": 29.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_16.pdf",
+  "supplier": "MOONSHOT AI PTE. LTD.",
+  "number": "KF5PGKQC-0003",
+  "date": "2026-06-21",
+  "amount": 99.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_17.pdf",
+  "supplier": "MOONSHOT AI PTE. LTD.",
+  "number": "KF5PGKQC-0004",
+  "date": "2026-07-18",
+  "amount": 199.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_18.pdf",
+  "supplier": "Anthropic, PBC",
+  "number": "JAZ1MYRW-0020",
+  "date": "2026-06-30",
+  "amount": 200.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_19.pdf",
+  "supplier": "WellyBox, Inc.",
+  "number": "ROF9BBNO-0007",
+  "date": "2026-07-16",
+  "amount": 258.42,
+  "currency": "ILS"
+ },
+ {
+  "file": "inv_20.pdf",
+  "supplier": "Composio",
+  "number": "UZHHRTXI-0002",
+  "date": "2026-06-30",
+  "amount": 29.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_21.pdf",
+  "supplier": "Suno",
+  "number": "TPD1BVMQ-0006",
+  "date": "2026-06-26",
+  "amount": 10.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_22.pdf",
+  "supplier": "Calendly LLC",
+  "number": "325D5065-0001",
+  "date": "2026-06-14",
+  "amount": 472.32,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_23.pdf",
+  "supplier": "WellyBox, Inc.",
+  "number": "ROF9BBNO-0006",
+  "date": "2026-06-16",
+  "amount": 258.42,
+  "currency": "ILS"
+ },
+ {
+  "file": "inv_24.pdf",
+  "supplier": "Atlas Cloud",
+  "number": "LQXOU3UH-0003",
+  "date": "2026-06-02",
+  "amount": 25.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_25.pdf",
+  "supplier": "Anthropic, PBC",
+  "number": "JAZ1MYRW-0019",
+  "date": "2026-05-30",
+  "amount": 200.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_26.pdf",
+  "supplier": "Composio",
+  "number": "UZHHRTXI-0001",
+  "date": "2026-05-29",
+  "amount": 29.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_27.pdf",
+  "supplier": "MOONSHOT AI PTE. LTD.",
+  "number": "KF5PGKQC-0002",
+  "date": "2026-05-21",
+  "amount": 39.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_28.pdf",
+  "supplier": "Suno",
+  "number": "TPD1BVMQ-0005",
+  "date": "2026-05-26",
+  "amount": 10.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_29.pdf",
+  "supplier": "Pinecone Systems, Inc.",
+  "number": "9167D345-0070",
+  "date": "2026-05-01",
+  "amount": 50.0,
+  "currency": "USD"
+ },
+ {
+  "file": "inv_30.pdf",
+  "supplier": "X Developer Platform",
+  "number": "CU2RTIIJ-0001",
+  "date": "2026-04-27",
+  "amount": 25.0,
+  "currency": "USD"
+ }
+]

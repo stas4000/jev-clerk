@@ -1,0 +1,121 @@
+{
+ "version": 6,
+ "author": "system 2 (claude-fable-5-1)",
+ "read": {
+  "instructions": {
+   "supplier": "Which line holds the name of the company that issued this invoice?",
+   "number": "Which line holds the invoice number?",
+   "date": "Which line holds the invoice date?",
+   "total": "Which line holds the FINAL total of the invoice (what has to be paid)? Prefer a line labelled 'Amount due' or 'Total' (e.g. 'Amount due $50.00 USD', 'Total $50.00'), or the big amount standing alone that equals it (e.g. '$200.00', '$50.00 USD'). If several different amounts appear, the total is the one that also appears in the 'Amount due' / 'Total' / '... due <date>' lines, NOT a line-item price, unit price, usage amount or subtotal. Never pick the line that contains 'due' plus a month and a year (e.g. '$200.00 USD due July 30, 2026'): pick the other line with the SAME amount.",
+   "date_order": "How is the invoice date written?",
+   "currency": "Which currency is the invoice total in? Judge by the currency symbol or code printed on the invoice.",
+   "category": "Which expense item fits what was bought?"
+  },
+  "category_criteria": {
+   "AI Models & API": "AI models, AI subscriptions, inference or generation credits.",
+   "SaaS Subscription": "A business software subscription.",
+   "Cloud & Hosting": "Servers, hosting, storage, databases.",
+   "Developer Tools": "APIs, SDKs and tools used by developers."
+  },
+  "hints": [
+   "TOTAL TRAP 1 (Anthropic, Pinecone; 5 times): picking the line '$200.00 USD due July 30, 2026' makes the year 2026 the amount. Never pick that line. But the amount INSIDE it ($200.00) IS the true total: pick the other line that shows that same amount without a date, e.g. '$200.00', '$200.00 USD', 'Amount due $200.00 USD', 'Total $200.00'.",
+   "TOTAL TRAP 2 (Pinecone, invoice 59): Jev picked '$49.87', a line-item/subtotal amount, and the invoice was booked wrong. When the invoice shows several different amounts, do NOT take a line-item, usage or subtotal figure. Take the amount of 'Amount due' / 'Total' (it matches the amount in the '... USD due <date>' line).",
+   "A stray letter in front of the total (e.g. 'N258.42', 'D258.42') is a mis-read currency symbol, not a dollar sign. It is most likely the shekel sign (ILS). Look for other lines with a currency code before choosing USD.",
+   "'US$' before the amount means USD. A plain '$' usually means USD, except for WellyBox.",
+   "WellyBox invoices (total 258.42) are in ILS: the shekel sign gets mis-read as 'N', 'D' or '$'. Choose ILS for WellyBox unless a line clearly says USD."
+  ]
+ },
+ "enter": {
+  "kind_instructions": "You enter one supplier invoice into the accounting app, one action at a time. The blank form ('New Entry', 'Draft') is already open, nothing is focused. Typing only works if your immediately previous action was a click_item on that input. Order: click lower 'Supplier' -> type_supplier -> click the date line ONCE -> type_date (the engine then clicks '+ Add Row' for you) -> then decide by the ITEM ROW at y≈472: (a) its first cell reads '× Item' or 'X Item' = item NOT entered yet: click_item on that '× Item' line; if your last action was exactly that click -> type_item. (b) the first cell shows the item name and the cell below 'Rate' reads '$ 0.00' -> click_item on it, once. (c) item name present, the cell below 'Rate' reads '0.00' without '$' and your last action was the click on it -> type_amount (the engine then clicks 'Save' for you). (d) popup 'Create new Purchase Invoice entry?' -> 'Yes' -> 'Submit' -> 'Yes'. If there is NO row at y≈472 after the date, click '+ Add Row' once yourself. While '× Item' is visible NEVER click '$ 0.00' or '0.00' and never choose type_amount. Never choose type_amount when the last action was type_item, press_return or type_amount. Never click the same line again after it changed nothing.",
+  "item_instructions": "If clicking is the right move, which on-screen line should be clicked? Blank form: the LOWER 'Supplier' (x≈917 y≈213), not the label at y≈181. While the row shows '× Item' / 'X Item' (x≈631 y≈472): click THAT line, it is the item input. Do not click the column header 'Item' (643,422), and do not click '$ 0.00' or '0.00' yet. Only when the item name stands in the row: click the '$ 0.00' whose below is 'Rate' (x≈976 y≈472), not the '$ 0.00' below 'Amount' (x≈1074) and not the '$0.00' at x≈815 (Net/Grand Total). In a popup click its button (Yes / No / Okay / Submit). Never click column headers (y≈422), the sidebar, the 'Purchase Invoice' title, the top 'Create' button, calendar day numbers, '+ Add Row' when a row already exists at y≈472, the date line once it shows the invoice date, or a line you already clicked with no effect.",
+  "kinds": {
+   "click_item": "Click one of the on-screen lines: a button (Save, Submit, Yes, No, Okay, and '+ Add Row' only if no item row exists yet), an input to focus it (lower 'Supplier', the date line, the row's '× Item' placeholder, the row's '$ 0.00' below 'Rate'), or a dropdown option. First action on the blank form: lower 'Supplier'. When the row at y≈472 shows '× Item': click that line. WRONG: clicking '0.00' (no '$') below Rate again, it is already focused.",
+   "type_supplier": "Type the supplier name. ONLY if your immediately previous action was click_item on the lower 'Supplier' line (y≈213). WRONG as the first action, WRONG after press_return, WRONG after a type_supplier that changed nothing. Return is pressed automatically afterwards.",
+   "type_date": "Type the invoice date. Choose this right after ONE click on the date line under 'Date', when the calendar popup (month name + year, day numbers, 'Clear', 'Today') is open and the line reads like '19/09/2026, 15:39:09'. The popup is closed and the date typed for you, and '+ Add Row' is clicked for you right after.",
+   "type_item": "Type the expense item name. ONLY if your immediately previous action was click_item on the row's '× Item' / 'X Item' line (x≈631 y≈472). WRONG after clicking the header 'Item' (y≈422) or after clicking '$ 0.00' / '0.00': the item does not get entered and Return scrolls the page (invoices 45, 46, 50). Return is pressed automatically afterwards.",
+   "type_amount": "Type the invoice amount. ONLY if the item name already stands in the row (no '× Item' on screen) AND your immediately previous action was click_item on the row's cell below 'Rate' (it now reads '0.00' without '$', x≈981 y≈472). WRONG if your previous action was type_item, press_return or type_amount. Never twice in a row. Tab and a click on 'Save' follow automatically.",
+   "press_return": "Press Return to confirm the highlighted dropdown option, only if a dropdown with the typed value is still open and the value is not yet in the field. Not needed after type_supplier/type_item: it is pressed for you.",
+   "press_tab": "Press Tab to leave a field after its value is visibly on screen. Do not use Tab to find fields.",
+   "press_escape": "Press Escape to close a menu that is blocking the form. Do NOT use it on the date calendar before type_date, and do not use it on Yes/No or Okay popups: click their button instead.",
+   "scroll_down": "Scroll down, only if a needed button or field is not among the screen lines.",
+   "scroll_up": "Scroll up when the form is scrolled down: the lines 'Number Series', 'Supplier', 'Date' are missing and 'Add Row' stands near y≈203 with 'Net Total' at y≈253. Then continue with the item row.",
+   "wait": "The screen is still changing; wait.",
+   "done": "Only when the invoice was saved AND submitted: the form no longer shows 'Draft', 'New Entry' or 'Not Submitted' and shows the supplier and the correct Grand Total. Never while Grand Total is $0.00 or a popup is open."
+  },
+  "hints": [
+   "STEP 1: the blank form ('New Entry', 'Draft') is open and NO field is focused. First action = click_item on the LOWER 'Supplier' line (x≈917 y≈213; the label at y≈181 does nothing). Only then type_supplier. If you see a list screen instead, click 'Make Entry'.",
+   "TRAP: type_supplier as the first action types into nothing (screen_changed=False, placeholder 'Supplier' stays at y≈213). If that happened, click the lower 'Supplier' line now, then type_supplier.",
+   "After type_supplier the engine presses Return itself. The supplier is entered when its name stands at y≈213 and Account shows 'Creditors'. A leftover dropdown (name + 'Create' at y≈262-295) closes with your next click. Do not retype, do not click 'Create'.",
+   "DATE: click the date line under 'Date' ONCE (reads 'Sep 19, 2026 ...', x≈957 y≈290). A calendar opens and the line becomes '19/09/2026, ...'. The very next action MUST be type_date (the engine closes the calendar and types). Nothing in between.",
+   "The date is entered when the line reads like '26/06/2026, ...' or 'Jun 26, 2026 ...' matching the invoice date. Then NEVER click the date line again: it only reopens the calendar.",
+   "ADD ROW IS AUTOMATIC: right after type_date the engine clicks '+ Add Row' itself. You should then see a row at y≈472 reading '× Item', 'Tax', '1', '$ 0.00', '$ 0.00' with '+ Add Row' moved down to y≈520. Do NOT click Add Row then: a second row makes every save fail. Only if NO row exists at y≈472, c",
+   "ITEM FIRST: when the row shows '× Item' (OCR may read 'X Item'; x≈631 y≈472), click that line. That is the row's item input. NOT the header 'Item' at 643,422 and NOT '$ 0.00'. A dropdown with the item names opens; then type_item.",
+   "RULE: while a line '× Item' / 'X Item' is on screen, the item is NOT entered. The only right moves are: click '× Item', then type_item. Everything about Rate and amount comes later.",
+   "TRAP (invoices 42-50, 8 of 8 died): Jev clicked '$ 0.00' below 'Rate' while the row still showed '× Item', then clicked the '0.00' 4-7 more times with no effect. Do not touch the Rate cell before the item name is in the row.",
+   "TRAP (invoices 45, 46, 50): click on the header 'Item' (643,422) then type_item: the item was NOT entered ('× Item' stayed in the row) and Return scrolled the page. type_item only after a click on '× Item'.",
+   "After type_item + Return the item name replaces '× Item' in the row at y≈472 (OCR shows fragments like 'Is & AP!', 'Is & API >', 'scription', 'Al Mode'); a small dropdown (same name, 'Create') may stay open below. The cursor is STILL in the Item cell. Do not type now.",
+   "NEXT after the item name appears: click_item ONCE on the '$0.00' / '$ 0.00' whose below is 'Rate' (x≈976 y≈472). The cell turns into '0.00' without '$' (x≈981): that means it is focused. Next action = type_amount. Do NOT click '0.00' again.",
+   "Rate and Amount cells both read '$ 0.00' at y≈472: Rate is x≈976 with below='Rate', Amount is x≈1074 with below='Amount' (do not click). The '$0.00' at x≈815 belongs to Net/Grand Total: never click it.",
+   "TRAP: type_amount right after type_item/press_return writes the digits into the Item cell ('SaaS Subscription4', 'Cloud & Hosting25.'). Grand Total stays $0.00 and the save fails. Always click the Rate cell in between.",
+   "Never choose type_amount twice in a row. If Grand Total is still $0.00 after type_amount, click the row's cell below 'Rate' once, then type_amount once.",
+   "SAVE IS AUTOMATIC: after type_amount the engine presses Tab and clicks 'Save' itself. Normally the next thing you see is the popup 'Save New Purchase Invoice NN?' -> click 'Yes'. If instead the Draft form is still shown with Rate, Amount, Net Total and Grand Total all equal to the invoice amount, cl",
+   "Click 'Save' yourself only when the row's item name is CLEAN (no digits glued to it, no '× Item') and Grand Total shows the invoice amount.",
+   "Save popup 'Save New Purchase Invoice NN?' / 'Create new Purchase Invoice entry?' with 'Yes' and 'No': if it is plain, click 'Yes'. If it also says 'Entry has Grand Total $0.00. Please verify amounts', click 'No', then click the row's cell below 'Rate', then type_amount.",
+   "Popup 'Not Found - Item value <name><digits> does not exist': click 'Okay'. The Item cell is corrupted. Do NOT click Save again. Repair: click the corrupted name in the row, click the clean item name in the dropdown below, then Rate cell, then type_amount.",
+   "Popup 'Mandatory Error - Value missing for Items Row 2': click 'Okay'; an empty second row exists (y≈520, with an '×' at its left). Try clicking that '×' to remove it. Never click 'Add Row' again.",
+   "After 'Yes' the title becomes 'PINV-10NN', the state reads 'Not Submitted' and a 'Submit' button stands at the top right (1298,67): click it, then click 'Yes' in the popup 'Mark Purchase Invoice as submitted?'. Saving alone does not count. 'Not Submitted' on screen = not done yet.",
+   "SCROLLED FORM: if 'Number Series', 'Supplier' and 'Date' are missing and you see 'Add Row' near y≈203, 'Net Total' y≈253, 'References', 'Notes', the form is scrolled down. Choose scroll_up. Do not click '$0.00' at 815,285.",
+   "Never click the 'Purchase Invoice' title, the top 'Create' button (x≈1227 or 1169, y≈67), or sidebar lines (Dashboard, Sales, Purchases, Suppliers, Purchase Items, Common, Reports, Setup). In popups click the button line; after 'Okay' on an error, FIX it before the next Save.",
+   "If your last action shows screen_changed=False, or you already clicked the same line twice, choose something DIFFERENT: after a type_* that changed nothing, click the field; after a useless click, a different line or the matching type_* action.",
+   "Do not use press_tab to hunt for fields: focus is invisible and values typed that way never landed. Click the field you want."
+  ],
+  "reflexes": [
+   {
+    "after": "type_supplier",
+    "do": "press_return"
+   },
+   {
+    "after": "type_item",
+    "do": "press_return"
+   },
+   {
+    "after": "type_date",
+    "do": "click_text",
+    "text": "+ Add Row",
+    "which": "last"
+   },
+   {
+    "after": "type_amount",
+    "do": "click_text",
+    "text": "Save",
+    "which": "last"
+   }
+  ],
+  "date_typing": {
+   "format": "%d%m%Y",
+   "pre_keys": [
+    "escape"
+   ],
+   "post_keys": []
+  },
+  "amount_typing": {
+   "pre_keys": [],
+   "post_keys": [
+    "tab"
+   ]
+  },
+  "settle_seconds": {
+   "default": 1.0,
+   "click_item": 1.0,
+   "type_supplier": 1.1,
+   "type_item": 1.1,
+   "type_date": 1.0,
+   "type_amount": 1.2,
+   "press_return": 1.0,
+   "press_tab": 0.8,
+   "press_escape": 0.8
+  },
+  "min_confidence": 0.0,
+  "max_steps": 34
+ }
+}

@@ -1,0 +1,22 @@
+[project]
+name = "jev-clerk"
+version = "0.1.0"
+description = "A desktop bookkeeping clerk: Jev (System 1) decides every step, a deep model (System 2) rewrites its playbook every ten invoices."
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dependencies = [
+  "typesafe-computer-use @ git+https://github.com/awlevin/typesafe-computer-use",
+  "pillow",
+]
+
+[project.scripts]
+jev-clerk = "jev_clerk.run:main"
+jev-clerk-system2 = "jev_clerk.system2:main"
+jev-clerk-frontier = "jev_clerk.frontier:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true

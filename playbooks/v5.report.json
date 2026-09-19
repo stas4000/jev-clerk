@@ -1,0 +1,90 @@
+{
+ "block": "41-50",
+ "from_version": 4,
+ "to_version": 5,
+ "model": "claude-fable-5-1",
+ "prompt_chars": 120306,
+ "seconds": 118.3,
+ "cost_usd": 1.8187700000000002,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 64185,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 10701,
+  "output_tokens_details": {
+   "thinking_tokens": 3825
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 64185,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "not_available",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 10701,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 64185,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 64185
+    },
+    "type": "message",
+    "model": null
+   }
+  ],
+  "speed": "standard"
+ },
+ "diagnosis": [
+  "v4 fixed the start. In all 8 entered invoices (42-48, 50), steps 1-6 worked: click lower 'Supplier', type_supplier + Return, click date, type_date (the field shows '15/08/2026', then 'Aug 15, 2026'), click '+ Add Row'. Nothing in that part is changed.",
+  "All 8 failed at step 7. After Add Row the row's item input reads '× Item' or 'X Item' at x≈631 y≈472 (S7, S31), not 'Item'. The playbook named it \"the LOWER 'Item'\" and gave the Rate cell as the target after the item, so Jev clicked '$ 0.00' below 'Rate' (976,472). The item was never entered.",
+  "Clicking the Rate cell puts it in edit mode: it reads '0.00' without '$' at x≈981 (S8). Jev then clicked that '0.00' 4-7 more times with screen_changed=False (#42 steps 8-13, #43, #44, #47, #48). It never typed, because the hints say type_amount requires the item name in the row.",
+  "In #45, #46 and #50 (step 8) Jev clicked the column header 'Item' at 643,422. That click focuses nothing, so type_item did not reach the item cell and '× Item' is still in the row afterwards (S33, S41, S61). The reflex Return then scrolled the form down (S34). Jev clicked Net Total '$0.00' at 815,285 three times with no effect.",
+  "No hint covers the scrolled form in S34, where 'Number Series' and 'Supplier' are gone and 'Add Row' stands at y≈203. scroll_up is needed there.",
+  "The old x coordinates for the row (476, 1079, 1241) no longer match the layout. The real ones are '× Item' 631, Rate '$ 0.00' 976, Amount '$ 0.00' 1074. Both money cells read '$ 0.00', so only the 'below' value ('Rate' or 'Amount') tells them apart.",
+  "Read stage: both Anthropic invoices (#44, #48) again picked '$200.00 USD due <date>, 2026' and read the amount as 2026. They would fail the amount check even with perfect entry. Venice and Moonshot picked short lines like '$10.00 USD', so a short amount line presumably exists on these Stripe-style invoices."
+ ],
+ "changes": [
+  {
+   "change": "Name the item input by its real OCR text '× Item' / 'X Item' (x≈631 y≈472, below='Item')",
+   "why": "Jev could not find a row line reading 'Item' and chose the Rate cell or the header instead.",
+   "evidence": "S7, S31; step 7 of #42-48 and #50; step 8 of #45, #46, #50"
+  },
+  {
+   "change": "Decide kind_instructions by the state of the row (no row / '× Item' present / item name present + '$ 0.00' / '0.00' edit mode)",
+   "why": "As long as '× Item' is visible the item is missing, and no click on the Rate cell can be right.",
+   "evidence": "#42 steps 7-13, #47 steps 7-14"
+  },
+  {
+   "change": "Explain the Rate edit mode: '$ 0.00' becomes '0.00' at x≈981 after one click, then type_amount, never click it again",
+   "why": "Jev clicked the focused cell up to 7 times without typing.",
+   "evidence": "S8-S10, #44 steps 8-14, #48 steps 8-14"
+  },
+  {
+   "change": "Forbid type_item after clicking the header 'Item' (643,422) or a money cell",
+   "why": "After the header click type_item did not enter the item ('× Item' stayed), and the reflex Return scrolled the page.",
+   "evidence": "#45, #46, #50 steps 8-10, S33 -> S34"
+  },
+  {
+   "change": "Add a recovery hint for the scrolled form (scroll_up)",
+   "why": "Jev clicked Net Total '$0.00' three times on S34 with no effect.",
+   "evidence": "#45, #46, #50 steps 11-13"
+  },
+  {
+   "change": "Correct the row coordinates and tell Jev to separate Rate from Amount by 'below'",
+   "why": "The layout shifted and both cells read '$ 0.00'.",
+   "evidence": "S7: 976,472 below Rate; 1074,472 below Amount"
+  },
+  {
+   "change": "Strengthen the read instruction for total and move the 'due <date>' trap to the first hint",
+   "why": "Anthropic totals were read as 2026.0 twice more.",
+   "evidence": "#44, #48 read picked lines"
+  }
+ ],
+ "expected_effect": "Jev clicks '× Item' right after Add Row, types the item, clicks the Rate cell once, types the amount and reaches Save/Submit, so the first correct bookings should appear; Anthropic totals should read 200.00."
+}

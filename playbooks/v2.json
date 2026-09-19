@@ -1,0 +1,102 @@
+{
+ "version": 2,
+ "author": "system 2 (claude-fable-5-1)",
+ "read": {
+  "instructions": {
+   "supplier": "Which line holds the name of the company that issued this invoice?",
+   "number": "Which line holds the invoice number?",
+   "date": "Which line holds the invoice date?",
+   "total": "Which line holds the total amount of the invoice? Prefer a short line with only a label and the amount (e.g. 'Total $200.00', 'Amount due $200.00', '$29.00'). Avoid lines that also contain a date such as '$200.00 USD due July 30, 2026'.",
+   "date_order": "How is the invoice date written?",
+   "currency": "Which currency is the invoice total in? Judge by the currency symbol or code printed on the invoice, not by the vendor's name.",
+   "category": "Which expense item fits what was bought?"
+  },
+  "category_criteria": {
+   "AI Models & API": "AI models, AI subscriptions, inference or generation credits.",
+   "SaaS Subscription": "A business software subscription.",
+   "Cloud & Hosting": "Servers, hosting, storage, databases.",
+   "Developer Tools": "APIs, SDKs and tools used by developers."
+  },
+  "hints": [
+   "A stray letter in front of the total (e.g. 'N258.42') is a mis-read currency symbol, not a dollar sign. 'N' is most likely the shekel sign (ILS). Look for other lines with a currency code before choosing USD.",
+   "'$' or 'US$' before the amount means USD.",
+   "For the total, do NOT pick a line like '$200.00 USD due July 30, 2026': the year 2026 gets mistaken for the amount (happened twice with Anthropic). Pick a line like 'Total $200.00' or 'Amount due $200.00 USD' that has no date in it."
+  ]
+ },
+ "enter": {
+  "kind_instructions": "You are entering one supplier invoice into the accounting app, one action at a time. Typing only works after you CLICKED the input field in the previous step. A value counts as entered only if you can see it in the screen lines; 'typed so far' does not prove it landed. Order: Make Entry -> click lower 'Supplier' -> type_supplier (Return is pressed for you) -> click the date line ONCE -> type_date (the calendar popup is closed for you) -> Add Row -> click the row's 'Item' -> type_item (Return is pressed for you) -> click the row's '$0.00' under Rate -> type_amount -> Save -> Submit. Which kind of action makes the most progress right now? Never repeat an action that changed nothing.",
+  "item_instructions": "If clicking is the right move, which on-screen line should be clicked? When the same text appears twice (label/header above, placeholder below), click the LOWER one: that is the input. Never click the sidebar, the 'Purchase Invoice' title, calendar day numbers, or a line whose last click changed nothing. Never click the date line if your previous action was already a click on the date line.",
+  "kinds": {
+   "click_item": "Click one of the on-screen lines: a button (Make Entry, Add Row, Save, Submit), an empty input placeholder or cell to focus it, or a dropdown option.",
+   "type_supplier": "Type the supplier name. Only right after clicking the Supplier input (the lower 'Supplier' line, y about 213) and only if the supplier name is not yet visible on screen. Return is pressed automatically afterwards.",
+   "type_date": "Type the invoice date. Choose this right after ONE click on the date line under 'Date', when the calendar popup ('September 2026', day numbers, 'Clear', 'Today') is open and the line reads like '19/09/2026, 15:39:09'. The popup is closed and the date typed for you.",
+   "type_item": "Type the expense item name. Only right after clicking the 'Item' cell of the row created with 'Add Row' (a dropdown with item names is open). Return is pressed automatically afterwards.",
+   "type_amount": "Type the invoice amount. Only right after clicking the '$0.00' cell under 'Rate' in the item row (x about 1079), and only when the item name is already visible in the row. Never while the Item cell or its dropdown is active.",
+   "press_return": "Press Return to confirm the highlighted dropdown option, only if a dropdown with the typed value is still open and the value is not yet selected.",
+   "press_tab": "Press Tab to leave a field after its value is visibly on screen. Do not use Tab to find fields.",
+   "press_escape": "Press Escape to close a popup or menu that is blocking the form. Do NOT use it on the date calendar before type_date: type_date closes the calendar itself.",
+   "scroll_down": "Scroll down, only if a needed button or field is not among the screen lines.",
+   "scroll_up": "Scroll up, only if Save/Submit or the Supplier field is not among the screen lines.",
+   "wait": "The screen is still changing; wait.",
+   "done": "Only when the invoice was saved AND submitted: the form no longer shows 'Draft' or 'New Entry' and shows the supplier and the correct Grand Total."
+  },
+  "hints": [
+   "On the list screen ('No entries found' or a table), click 'Make Entry' to open a new Purchase Invoice form ('New Entry', 'Draft').",
+   "After 'Make Entry' NO field is focused. Click the LOWER 'Supplier' line (x≈917 y≈213, the input; the label at y≈181 does nothing), then type_supplier.",
+   "After type_supplier the engine presses Return itself. The supplier is entered when its name stands at y≈213 and the Account field shows 'Creditors'. A leftover dropdown (name + 'Create' at y≈262-295) closes with your next click. Do not retype or click 'Create'.",
+   "DATE step 1: click the date line under 'Date' ONCE (reads 'Sep 19, 2026 ...', x≈957 y≈290). A calendar opens ('September 2026', day numbers, 'Clear', 'Today') and the line becomes '19/09/2026, 15:39:09'. This is expected.",
+   "DATE step 2: with the calendar open, the next action MUST be type_date (the engine closes the calendar and types day, month, year). Do not click anything in between, do not press_escape yourself.",
+   "NEVER click the date line twice in a row. The 2nd click puts the cursor in the year and typing makes garbage like '19/09/72620' (invoice 13); more clicks change nothing (seen 30 times, every run died there).",
+   "The date field is day-first: invoice date 2026-07-30 is entered when the line reads '30/07/2026, ...' (editing) or 'Jul 30, 2026 ...' (after). Ignore the time. If it still shows today ('19/09/2026' or 'Sep 19, 2026'), it is not entered.",
+   "Once the date line shows the invoice date, leave it alone and click 'Add Row'. Never click calendar day numbers, 'Clear' or 'Today'.",
+   "If a red 'Date is required' appears or the year looks broken (e.g. '72620'): click the date line ONCE, then type_date again. Same two steps, nothing else.",
+   "After 'Add Row' a row appears with 'Item', 'Tax', '1', '$0.00', '$ 0.00' on one y (≈472, or ≈494 when an error line is shown) and 'Add Row' moves down. Click only ONE 'Add Row' per invoice.",
+   "Item: click the row's 'Item' placeholder (the LOWER 'Item', x≈476, y≈472/494), not the column header at y≈423/445. A dropdown with the four item names opens; then type_item. The engine presses Return after typing.",
+   "The item is entered when its name stands in the row at x≈510 (OCR may read 'Al Models & API' for 'AI Models & API'). Never type_amount while the Item cell is active: invoice 13 got 'Al Models & API10.' that way.",
+   "Rate: click the '$0.00' line in the item row under the 'Rate' header (x≈1079, same y as the row). NOT the '$0.00' at x≈815 (Net/Grand Total) and NOT '$ 0.00' at x≈1241 (Amount). Then type_amount; the engine presses Tab after it.",
+   "After type_amount check 'Grand Total' (x≈815): it must show the invoice amount, not $0.00. If it is wrong, click the row's Rate cell again and type_amount again.",
+   "When supplier, date and Grand Total are all visible and correct, click 'Save' (top right, x≈1302 y≈67). Do not click 'Save' while Grand Total is $0.00 or 'Date is required' is shown.",
+   "After Save, a 'Submit' button should appear at the top right: click it, and if a confirmation popup appears, click its confirming button (Yes / Submit). Saving alone leaves a Draft, which does not count.",
+   "Never click the 'Purchase Invoice' title, the top 'Create' button (x≈1227 y≈67), or sidebar lines (Dashboard, Sales, Purchases, Suppliers, Purchase Items, Common, Reports, Setup).",
+   "Do not use press_tab to hunt for fields: focus is invisible and values typed that way never landed. Click the field you want.",
+   "If the last action shows screen_changed=False, choose a DIFFERENT action or a DIFFERENT line. Two identical no-change actions in a row is a loop.",
+   "If a red error or popup appears, read it: click the field it names and fix it; press_escape only for a menu that blocks the form."
+  ],
+  "reflexes": [
+   {
+    "after": "type_supplier",
+    "do": "press_return"
+   },
+   {
+    "after": "type_item",
+    "do": "press_return"
+   }
+  ],
+  "date_typing": {
+   "format": "%d%m%Y",
+   "pre_keys": [
+    "escape"
+   ],
+   "post_keys": []
+  },
+  "amount_typing": {
+   "pre_keys": [],
+   "post_keys": [
+    "tab"
+   ]
+  },
+  "settle_seconds": {
+   "default": 1.0,
+   "click_item": 1.2,
+   "type_supplier": 1.2,
+   "type_item": 1.2,
+   "type_date": 1.0,
+   "type_amount": 1.0,
+   "press_return": 1.0,
+   "press_tab": 0.8,
+   "press_escape": 0.8
+  },
+  "min_confidence": 0.0,
+  "max_steps": 40
+ }
+}

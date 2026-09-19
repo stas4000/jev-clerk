@@ -1,0 +1,81 @@
+{
+ "block": "61-70",
+ "from_version": 6,
+ "to_version": 7,
+ "model": "claude-fable-5-1",
+ "prompt_chars": 179988,
+ "seconds": 103.0,
+ "cost_usd": 2.4087692499999998,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 95534,
+  "cache_read_input_tokens": 1277,
+  "output_tokens": 9955,
+  "output_tokens_details": {
+   "thinking_tokens": 2626
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 95534,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "not_available",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 9955,
+    "cache_read_input_tokens": 1277,
+    "cache_creation_input_tokens": 95534,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 95534
+    },
+    "type": "message",
+    "model": null
+   }
+  ],
+  "speed": "standard"
+ },
+ "diagnosis": [
+  "v6 booked 9/9 (invoices 61, 63-70). Every run followed the same 15-step path with wasted=0, and no step had screen_changed=False. Nothing is broken, so the procedure stays.",
+  "Both v6 reflexes fired identically in all 9 runs. '+ Add Row' after type_date (step 6) always produced the 'X Item' row at y≈472 (S7, S21, S34...). 'Save' after type_amount (step 12) always produced the popup 'Create new Purchase Invoice entry?' (S13, S27...).",
+  "Two v6 hints went over the 300-character limit and were cut off mid-sentence: 'Only if NO row exists at y≈472, c' and 'all equal to the invoice amount, cl'. Jev has been reading broken fallback instructions. They never mattered only because the fallback was never needed.",
+  "Jev's lowest confidence is the date click at step 4 (0.65-0.83, runner_up scroll_up, scroll_down or type_date). On that screen the supplier's leftover dropdown (name + 'Create' at y≈262-296) hides the 'Date' label (S3, S17, S30). The click was right every time, but this is the weakest decision.",
+  "Time is 30 s per invoice for 15 steps, about 2 s per step, and roughly half of that is settle time. Every screen was fully drawn at 1.0 s. Reflex clicks hit fixed positions ('+ Add Row' 641,473; 'Save' 1302,67), so they tolerate a shorter settle.",
+  "Risk to respect when cutting settle: the supplier and item dropdowns must finish filtering before the reflex Return (S2 still shows the full unfiltered supplier list right after the click). Settle after type_supplier and type_item therefore stays at 1.0.",
+  "Invoice 62 (WellyBox, ILS) took 0 steps and booked no row, yet was counted as a success. The engine handled it, and the read was correct (ILS, 258.42). No playbook change is needed.",
+  "I am not adding a 'Yes' or 'Submit' reflex. It would have to key on click_item and so fire after every click, including on the 'Grand Total $0.00' warning popup. The log does not show what happens when the reflex text is missing from the screen."
+ ],
+ "changes": [
+  {
+   "change": "Repair the two truncated hints (Add Row automatic, Save automatic)",
+   "why": "Both were over 300 characters and cut mid-sentence, which left the fallback instruction unreadable.",
+   "evidence": "v6 enter.hints #6 ends '..., c' and #16 ends '..., cl'"
+  },
+  {
+   "change": "Sharpen the date-click hint with the screen as seen after the supplier",
+   "why": "Step 4 is Jev's least confident decision because the leftover dropdown hides the 'Date' label.",
+   "evidence": "inv 64 step 4 conf 0.65 runner_up scroll_up; screens S3, S17, S30"
+  },
+  {
+   "change": "Lower settle for click_item, press_return, type_date, press_tab and default to 0.8, and type_amount to 1.0; keep type_supplier and type_item at 1.0",
+   "why": "Every screen was fully drawn at 1.0 s and reflex targets sit at fixed positions, while the dropdown filter before the reflex Return still needs its time.",
+   "evidence": "inv 61-70: 135 steps, all screen_changed=True, no half-drawn screens; S2 shows an unfiltered list right after the click"
+  },
+  {
+   "change": "Rewrite the save-popup and submit hints with the exact on-screen texts confirmed in this block",
+   "why": "'Save New Purchase Invoice NN?' + 'Create new Purchase Invoice entry?' and 'Submit PINV-10NN?' + 'Mark Purchase Invoice as submitted?' appeared identically 9 times.",
+   "evidence": "S13/S15, S27/S29, S40/S42 ..."
+  },
+  {
+   "change": "max_steps 34 -> 30",
+   "why": "The happy path is 15 steps, so 30 still leaves room for one full repair loop while cutting time lost on a dead run.",
+   "evidence": "all 9 runs took exactly 15 steps"
+  }
+ ],
+ "expected_effect": "Same 9/9 accuracy on the unchanged 15-step path, about 2-3 seconds faster per invoice, with complete fallback instructions if a reflex ever misses."
+}

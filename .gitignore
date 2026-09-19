@@ -1,0 +1,15 @@
+.env
+__pycache__/
+*.pyc
+invoices/*.pdf
+runs/*/shots/
+runs/*/*.mp4
+runs/*/filed/
+runs/*/review/
+runs/test/
+video/frames/
+video/frames_out/
+video/fonts/g.css
+video/*.wav
+.venv/
+video/stills.cjs

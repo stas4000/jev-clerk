@@ -1,0 +1,96 @@
+{
+ "block": "21-30",
+ "from_version": 2,
+ "to_version": 3,
+ "model": "claude-fable-5-1",
+ "prompt_chars": 287821,
+ "seconds": 148.0,
+ "cost_usd": 3.7167417499999997,
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 155164,
+  "cache_read_input_tokens": 1167,
+  "output_tokens": 12263,
+  "output_tokens_details": {
+   "thinking_tokens": 5775
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 155164,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "not_available",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 12263,
+    "cache_read_input_tokens": 1167,
+    "cache_creation_input_tokens": 155164,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 155164
+    },
+    "type": "message",
+    "model": null
+   }
+  ],
+  "speed": "standard"
+ },
+ "diagnosis": [
+  "All 10 invoices failed for the same reason. After type_item and the press_return reflex, the dropdown is still open and the cursor is still in the Item cell (S10, S32, S94). Jev then chose type_amount (conf 0.46-0.57, runner_up click_item) without clicking the Rate cell. The amount landed in the Item cell ('Al Models & API10.' S12, 'SaaS Subscription4' S34, 'Cloud & Hosting25.' S76).",
+  "Jev repeated type_amount 3 to 5 times in a row (inv 22, 24, 25, 27, 28, 29, 30 steps 11-15). The post-typing Tab moved focus Item -> Tax -> Quantity -> Rate, so the amount also landed in Tax (x≈646, S36, S78) and Quantity (x≈912-925, S38, S80). Grand Total stayed $0.00.",
+  "Clicking '$0.00' at [1079,471] and then type_amount works: Rate and Grand Total became $10.00 (inv 21 steps 12-13, S14) and $258.42 (inv 23 steps 14-15, S58). Those two invoices still failed only because the Item cell had already been corrupted by the first stray type_amount.",
+  "Save -> 'Yes' on a corrupted item always gives 'Not Found: Item value <name><amount> does not exist' (S16, S40, S60, ...). Jev then looped Save/Yes/Okay/Escape until max_steps, 20 or more wasted steps per invoice. Each loop burned a PINV number (PINV-1001 to 1043).",
+  "The save dialog warns 'Entry has Grand Total $0.00. Please verify amounts' (S39, S81, ...). Jev clicked Yes anyway; the right answer is No, then fix the rate.",
+  "A repair path is visible. Clicking the corrupted item cell reopens the dropdown with the four clean names at y≥520 (S104, S174). Clicking the clean name restores the item (S105, S176). Jev then ruined it again by choosing type_amount without clicking Rate (inv 25 step 21, inv 28 step 22).",
+  "Other traps: a second 'Add Row' gives 'Mandatory Error ... Items Row 2' on every save (inv 26 step 17, S134). Clicking the 'Rate' header changes nothing (inv 24 steps 32-35). Clicking the date line again reopens the calendar (inv 27).",
+  "Read: inv 29 again picked '$50.00 USD due May 1, 2026' and produced 2026.00. WellyBox (inv 23) was read as USD from '$258.42' and marked wrong; an earlier block had the same amount as 'N258.42', so WellyBox is likely ILS."
+ ],
+ "changes": [
+  {
+   "change": "kind_instructions rewritten as a table keyed on the last action",
+   "why": "Jev ignored the long ordered list; the rule 'last action must be a click on $0.00 before type_amount' is now the decision key.",
+   "evidence": "inv 22-30 step 11: type_amount right after the press_return reflex"
+  },
+  {
+   "change": "type_amount criteria forbid it after type_item, press_return or type_amount",
+   "why": "Typing the amount with the cursor in the Item cell corrupts the item and makes every save fail.",
+   "evidence": "S12, S34, S76, S96, S144, S166, S195, S215"
+  },
+  {
+   "change": "New hints for the save dialog, the $0.00 warning and the 'Not Found' error",
+   "why": "Jev looped Save/Yes/Okay for 20 or more steps instead of repairing the row.",
+   "evidence": "inv 21 steps 14-40, inv 22 steps 16-40, inv 29 steps 16-40"
+  },
+  {
+   "change": "Repair recipe for a corrupted item cell",
+   "why": "The log shows that clicking the cell and then the clean dropdown name restores the item; it then needs a click on $0.00 before type_amount.",
+   "evidence": "inv 25 steps 19-21 (S104->S105), inv 28 steps 20-22 (S174->S176)"
+  },
+  {
+   "change": "Hints against a second Add Row, clicking the Rate header and re-clicking the date",
+   "why": "Each of these caused dead loops.",
+   "evidence": "inv 26 step 17/S134, inv 24 steps 31-35, inv 27 steps 16-40"
+  },
+  {
+   "change": "Removed hints that described behaviour no longer seen (date garbage, Tab hunting) to make room",
+   "why": "The date flow now works 10/10; hint space is needed for the amount and save traps.",
+   "evidence": "steps 5-6 succeeded in all 10 invoices"
+  },
+  {
+   "change": "Read: stronger total instruction and a WellyBox ILS hint",
+   "why": "The year 2026 was taken as the amount again, and the WellyBox currency was wrong.",
+   "evidence": "inv 29 read (amount 2026.0), inv 23 read_ok currency False"
+  },
+  {
+   "change": "max_steps 40 -> 34, type settle slightly longer",
+   "why": "The happy path is about 17 steps, so failed runs should die sooner; screens right after type_amount were still in edit state (S13, S57).",
+   "evidence": "S13 and S57 show '0.00' still editing; S14 and S58 show the value one step later"
+  }
+ ],
+ "expected_effect": "Jev should click the Rate '$0.00' cell before typing the amount, so Item stays clean and Grand Total is right on the first try, letting Save -> Yes -> Submit be reached in about 17 steps."
+}

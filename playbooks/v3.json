@@ -1,0 +1,105 @@
+{
+ "version": 3,
+ "author": "system 2 (claude-fable-5-1)",
+ "read": {
+  "instructions": {
+   "supplier": "Which line holds the name of the company that issued this invoice?",
+   "number": "Which line holds the invoice number?",
+   "date": "Which line holds the invoice date?",
+   "total": "Which line holds the total amount of the invoice? Pick a SHORT line with only a label and the amount, or the amount alone (e.g. 'Total $50.00', 'Amount due $50.00', '$50.00'). NEVER pick a line that also contains a date or year, such as '$50.00 USD due May 1, 2026'.",
+   "date_order": "How is the invoice date written?",
+   "currency": "Which currency is the invoice total in? Judge by the currency symbol or code printed on the invoice.",
+   "category": "Which expense item fits what was bought?"
+  },
+  "category_criteria": {
+   "AI Models & API": "AI models, AI subscriptions, inference or generation credits.",
+   "SaaS Subscription": "A business software subscription.",
+   "Cloud & Hosting": "Servers, hosting, storage, databases.",
+   "Developer Tools": "APIs, SDKs and tools used by developers."
+  },
+  "hints": [
+   "A stray letter in front of the total (e.g. 'N258.42') is a mis-read currency symbol, not a dollar sign. 'N' is most likely the shekel sign (ILS). Look for other lines with a currency code before choosing USD.",
+   "'US$' before the amount means USD. A plain '$' usually means USD, except for WellyBox.",
+   "WellyBox invoices (total 258.42) are in ILS: the shekel sign gets mis-read as 'N' or '$'. Choose ILS for WellyBox unless a line clearly says USD.",
+   "For the total, do NOT pick a line like '$50.00 USD due May 1, 2026' or '$200.00 USD due July 30, 2026': the year 2026 gets taken as the amount (happened 3 times: Anthropic, Pinecone). The same amount stands on another line without a date ('Total', 'Amount due', 'Subtotal'): pick that one."
+  ]
+ },
+ "enter": {
+  "kind_instructions": "You enter one supplier invoice into the accounting app, one action at a time. Decide from the screen AND your LAST action. 1) List screen -> click 'Make Entry'. 2) Form shows placeholder 'Supplier' at y≈213 -> click it; if your last action was that click -> type_supplier. 3) Supplier name visible, date still 'Sep 19, 2026' -> click the date line once; calendar open -> type_date. 4) Date correct, no item row -> click 'Add Row' (once per invoice). 5) Row shows placeholder 'Item' -> click it; four item names listed -> type_item. 6) Item name stands in the row and Rate is '$0.00' -> click_item on '$0.00' at x≈1079. After type_item/press_return the cursor is STILL in the Item cell. 7) ONLY if your last action was a click on that '$0.00' -> type_amount, once. 8) Grand Total equals the invoice amount -> click 'Save' -> 'Yes' -> 'Submit' -> confirm. Never choose type_amount when the last action was type_item, press_return or type_amount. Never repeat an action that changed nothing.",
+  "item_instructions": "If clicking is the right move, which on-screen line should be clicked? When the same text appears twice (label/header above, placeholder below), click the LOWER one: that is the input. When the item name is in the row and Rate shows '$0.00', click the '$0.00' at x≈1079 on the row's y (≈471), not the '$0.00' at x≈815 and not '$ 0.00' at x≈1241. In a popup click its button (Yes / No / Okay / Submit). Never click column headers ('Item', 'Rate' at y≈423), the sidebar, the 'Purchase Invoice' title, the top 'Create' button, calendar day numbers, a second 'Add Row', or the date line once it shows the invoice date.",
+  "kinds": {
+   "click_item": "Click one of the on-screen lines: a button (Make Entry, Add Row, Save, Submit, Yes, No, Okay), an empty input placeholder or cell to focus it (lower 'Supplier', date line, row 'Item', row '$0.00' under Rate), or a dropdown option. This is the right choice straight after the item name appeared in the row: click '$0.00' at x≈1079.",
+   "type_supplier": "Type the supplier name. Only right after clicking the Supplier input (the lower 'Supplier' line, y≈213) and only if the supplier name is not yet visible on screen. Return is pressed automatically afterwards.",
+   "type_date": "Type the invoice date. Choose this right after ONE click on the date line under 'Date', when the calendar popup ('September 2026', day numbers, 'Clear', 'Today') is open and the line reads like '19/09/2026, 15:39:09'. The popup is closed and the date typed for you.",
+   "type_item": "Type the expense item name. Only right after clicking the 'Item' placeholder of the row created with 'Add Row' (a dropdown with the four item names is open). Return is pressed automatically afterwards.",
+   "type_amount": "Type the invoice amount. ONLY if your immediately previous action was click_item on the '$0.00' cell under 'Rate' (x≈1079, y≈471). WRONG if your previous action was type_item, press_return or type_amount: the cursor is then in the Item cell and the digits destroy the item ('Al Models & API10.'). Never twice in a row.",
+   "press_return": "Press Return to confirm the highlighted dropdown option, only if a dropdown with the typed value is still open and the value is not yet in the field. Not needed after type_supplier/type_item: it is pressed for you.",
+   "press_tab": "Press Tab to leave a field after its value is visibly on screen. Do not use Tab to find fields.",
+   "press_escape": "Press Escape to close a menu that is blocking the form. Do NOT use it on the date calendar before type_date, and do not use it on Yes/No or Okay popups: click their button instead.",
+   "scroll_down": "Scroll down, only if a needed button or field is not among the screen lines.",
+   "scroll_up": "Scroll up, only if Save/Submit or the Supplier field is not among the screen lines.",
+   "wait": "The screen is still changing; wait.",
+   "done": "Only when the invoice was saved AND submitted: the form no longer shows 'Draft' or 'New Entry' and shows the supplier and the correct Grand Total. Never while Grand Total is $0.00 or a popup is open."
+  },
+  "hints": [
+   "On the list screen ('No entries found' or a table), click 'Make Entry' to open a new Purchase Invoice form ('New Entry', 'Draft').",
+   "After 'Make Entry' NO field is focused. Click the LOWER 'Supplier' line (x≈917 y≈213, the input; the label at y≈181 does nothing), then type_supplier.",
+   "After type_supplier the engine presses Return itself. The supplier is entered when its name stands at y≈213 and Account shows 'Creditors'. A leftover dropdown (name + 'Create' at y≈262-295) closes with your next click. Do not retype, do not click 'Create'.",
+   "DATE: click the date line under 'Date' ONCE (reads 'Sep 19, 2026 ...', x≈957 y≈290). A calendar opens and the line becomes '19/09/2026, ...'. The very next action MUST be type_date (the engine closes the calendar and types). Nothing in between.",
+   "The date is entered when the line reads like '26/06/2026, ...' or 'Jun 26, 2026 ...' matching the invoice date. Then NEVER click the date line again: it only reopens the calendar ('May 2026', day numbers) and wastes steps (invoice 27 did this 7 times).",
+   "After the date, click 'Add Row' (x≈486 y≈472) exactly ONCE. A row appears with 'Item', 'Tax', '1', '$0.00', '$ 0.00' at y≈472 and 'Add Row' moves to y≈520. A second Add Row creates an empty Row 2 and every save fails with 'Mandatory Error ... Items Row 2'.",
+   "Item: click the row's 'Item' placeholder (LOWER 'Item', x≈476 y≈472), not the header at y≈423. A dropdown with four item names opens (y≈520-623); then type_item. The engine presses Return after typing.",
+   "After type_item + Return the item name stands in the row (x≈514 y≈472; OCR reads 'Al Models & API' for 'AI Models & API') and a small dropdown (same name at y≈520, 'Create' at y≈555) may still be open. The cursor is STILL in the Item cell. Do not type now.",
+   "NEXT STEP after the item name appears: click_item on '$0.00' at x≈1079 y≈471 (under the 'Rate' header). Only after that click choose type_amount. This order gave '$10.00' and '$258.42' correctly (invoices 21, 23).",
+   "TRAP seen in 9 of 10 invoices: type_amount right after type_item/press_return writes the digits into the Item cell ('SaaS Subscription4', 'Cloud & Hosting25.', 'Al Models & API20(') and later into Tax and Quantity. Grand Total stays $0.00 and the save fails.",
+   "Never choose type_amount twice in a row. If Grand Total is still $0.00 after type_amount, click '$0.00' at x≈1079 again, then type_amount once.",
+   "Rate cell = '$0.00' at x≈1079 on the row's y. NOT the '$0.00' at x≈815 (Net/Grand Total), NOT '$ 0.00' at x≈1241 (Amount), NOT the 'Rate' header at y≈423 (clicking it changes nothing, seen 8 times).",
+   "After type_amount the engine presses Tab. Success looks like: Rate '$10.00' at x≈1075, Amount at x≈1238, Net Total and Grand Total (x≈812) all showing the invoice amount. The cell may show '0.00' for a moment while editing.",
+   "Click 'Save' (x≈1302 y≈67) only when the row's item name is CLEAN (no digits glued to it), and Grand Total shows the invoice amount.",
+   "Save opens a popup 'Save New Purchase Invoice NN?' / 'Create new Purchase Invoice entry?' with 'Yes' and 'No'. If it is plain, click 'Yes'. If it also says 'Entry has Grand Total $0.00. Please verify amounts', click 'No' and go fix the Rate.",
+   "Popup 'Not Found - Item value <name><digits> does not exist': click 'Okay'. The Item cell is corrupted. Do NOT click Save again (it loops forever, invoices 21-30). Repair the item first.",
+   "REPAIR a corrupted item (name with digits at x≈520 y≈472): click that line; a dropdown opens with the four clean names at y≈520-623. Click the clean name of your item there (not 'Create', not the line with digits at y≈659). Then click '$0.00' x≈1079, then type_amount.",
+   "Popup 'Mandatory Error - Value missing for Items Row 2': click 'Okay'; an empty second row exists (y≈520, with an 'X' at x≈418). Try clicking that 'X' to remove it. Never click 'Add Row' again.",
+   "After a successful Save the 'Draft'/'New Entry' state changes and a 'Submit' button should appear at the top right: click it, and if a confirmation popup appears, click its confirming button (Yes / Submit). Saving alone leaves a Draft, which does not count.",
+   "Never click the 'Purchase Invoice' title, the top 'Create' button (x≈1227 y≈67), or sidebar lines (Dashboard, Sales, Purchases, Suppliers, Purchase Items, Common, Reports, Setup).",
+   "In popups click the button line ('Yes', 'No', 'Okay'); do not press_escape on them. After 'Okay' on an error, do something that FIXES the error before the next Save.",
+   "If the last action shows screen_changed=False, choose a DIFFERENT action or a DIFFERENT line. Save -> Yes -> Okay -> Save with nothing fixed in between is also a loop."
+  ],
+  "reflexes": [
+   {
+    "after": "type_supplier",
+    "do": "press_return"
+   },
+   {
+    "after": "type_item",
+    "do": "press_return"
+   }
+  ],
+  "date_typing": {
+   "format": "%d%m%Y",
+   "pre_keys": [
+    "escape"
+   ],
+   "post_keys": []
+  },
+  "amount_typing": {
+   "pre_keys": [],
+   "post_keys": [
+    "tab"
+   ]
+  },
+  "settle_seconds": {
+   "default": 1.0,
+   "click_item": 1.2,
+   "type_supplier": 1.2,
+   "type_item": 1.2,
+   "type_date": 1.0,
+   "type_amount": 1.3,
+   "press_return": 1.2,
+   "press_tab": 0.8,
+   "press_escape": 0.8
+  },
+  "min_confidence": 0.0,
+  "max_steps": 34
+ }
+}
