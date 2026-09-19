@@ -45,6 +45,12 @@ Things that were not the model's doing, so you can judge the curve fairly:
 - Blocks 4 and 5 were restarted once after engine fixes; the aborted partial blocks are kept in `runs/demo/ledger.with-aborted-*.jsonl` on the run machine and are not counted.
 - Suppliers and expense items were seeded into the company file before the run. The clerk never creates master data.
 
+## Against a frontier model
+
+Same entry job, same app, same referee, fields handed over already read. Claude Opus 5 working from one bare screenshot per step booked 2 of 2 correctly in about 21 steps, with 65 s of model time and $0.69 of API-equivalent cost per invoice. Jev on playbook v8: 9 of 9, about 4.5 s of model time and $0.0028 per invoice. Opus needed no coaching; Jev needed five System 2 passes before its first booked invoice. The Opus run is in `runs/frontier/ledger.jsonl`; its screenshots travelled through a relay, so only model latency is reported.
+
+The film: `video/jev-clerk-film-tg.mp4`.
+
 ## Run it
 
 macOS 14+, Python 3.12+, [uv](https://docs.astral.sh/uv/). Grant your terminal Screen Recording and Accessibility. Install Frappe Books, create a company, add your suppliers and expense items.

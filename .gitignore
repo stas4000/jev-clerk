@@ -13,3 +13,6 @@ video/fonts/g.css
 video/*.wav
 .venv/
 video/stills.cjs
+video/silent.mp4
+video/jev-clerk-film.mp4
+video/frames_all/
